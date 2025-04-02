@@ -55,7 +55,7 @@
                     <execution>
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>com.example.scrumapppp.HelloApplication</mainClass>
+                            <mainClass>com.example.scrumapppp.Application.HelloApplication</mainClass>
                         </configuration>
                     </execution>
                 </executions>

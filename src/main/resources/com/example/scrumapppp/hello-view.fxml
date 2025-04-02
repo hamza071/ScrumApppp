@@ -2,15 +2,18 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.VBox?>
 
-<?import javafx.scene.control.Button?>
 <VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.example.scrumapppp.HelloController">
+      fx:controller="com.example.scrumapppp.Controller.HelloController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
     </padding>
 
-    <Label fx:id="welcomeText"/>
+    <Label fx:id="welcomeText" text="Welcome!"/>
     <Button text="Hello!" onAction="#onHelloButtonClick"/>
+    <Button text="Login" onAction="#onLoginButtonClick"/>
+    <Button text="Register" onAction="#onRegisterButtonClick"/>
+
 </VBox>
