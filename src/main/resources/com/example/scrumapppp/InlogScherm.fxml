@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="10" alignment="CENTER"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.scrumapppp.Controller.InlogController">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="Gebruikersnaam:"/>
+    <TextField fx:id="gebruikersnaamField" promptText="Voer je gebruikersnaam in"/>
+
+    <Label text="Wachtwoord:"/>
+    <PasswordField fx:id="wachtwoordField" promptText="Voer je wachtwoord in"/>
+
+    <Button text="Inloggen" onAction="#handleInloggen"/>
+
+    <Label fx:id="statusLabel" text=""/>
+</VBox>
