@@ -5,19 +5,21 @@ public class UserSession {
     private static UserSession setSession;
 
     private int id;
-    private String username;  // Add other fields as needed
+    private String username;
+    private String email;// Add other fields as needed
 
 
-    private UserSession(int id, String username)
+    private UserSession(int id, String username, String email)
     {
         this.id = id;
         this.username = username;
+        this.email = email;
     }
 
     // Singleton instance getter
-    public static void setSession(int id, String username, String phonenumber) {
+    public static void setSession(int id, String username, String email) {
         if (setSession == null) {
-            setSession = new UserSession(id, username);
+            setSession = new UserSession(id, username, email);
             System.out.println("Session created: " + id + ", " + username);
         } else if(UserSession.getSession() == null){
             System.out.println("User is not logged in!");
@@ -60,6 +62,7 @@ public class UserSession {
         return "UserSession{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
                 '}';
     }
 }
