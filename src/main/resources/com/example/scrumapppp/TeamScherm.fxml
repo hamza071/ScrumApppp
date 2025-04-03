@@ -7,15 +7,8 @@
 
 <StackPane xmlns="http://javafx.com/javafx"
            xmlns:fx="http://javafx.com/fxml"
-           fx:controller="com.example.scrumappppp.Controller.TeamController"
+           fx:controller="com.example.scrumapppp.Controller.TeamController"
            prefWidth="1920" prefHeight="1080">
-
-    <!-- Achtergrond -->
-    <ImageView fitWidth="1920" fitHeight="1080" preserveRatio="false">
-        <image>
-            <Image url="/com/example/scrumappppp/Image/achtergrond.jpg"/>
-        </image>
-    </ImageView>
 
     <!-- Inhoud bovenop -->
     <VBox alignment="CENTER" spacing="20">
