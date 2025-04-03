@@ -11,4 +11,8 @@
             fx:controller="com.example.scrumapppp.Controller.ChatController"
             prefHeight="400.0" prefWidth="600.0">
 
+    <ListView fx:id="gebruikersListView" layoutX="50" layoutY="50" prefHeight="300" prefWidth="500"/>
+    <Button text="Chat starten" layoutX="50" layoutY="350" onAction="#startChat"/>
+
+
 </AnchorPane>

@@ -15,7 +15,9 @@
     <Label text="Gebruikersnaam:" />
     <TextField fx:id="gebruikersnaamField" promptText="Voer je gebruikersnaam in" />
 
-    <Button onAction="#handleInloggen" text="Inloggen" />
+<!--    For know I use the function 'validateLogin'. Because there is currently no password.
+Otherwise handleInloggen can be used.-->
+    <Button onAction="#handleLogin" text="Inloggen" />
 
     <Button onAction="#handleRegistreren" text="Registreren" />
 </VBox>
