@@ -1,4 +1,5 @@
 package com.example.scrumapppp.Application;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -17,6 +18,7 @@ public class TeamApplication extends Application {
 
             primaryStage.setTitle("TeamFlow - Scrumboard");
             primaryStage.setScene(scene);
+            primaryStage.setFullScreen(true); // Zet de applicatie in full-screen modus
             primaryStage.show();
         } catch (Exception e) {
             e.printStackTrace();
