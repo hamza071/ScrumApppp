@@ -1,58 +1,30 @@
 package com.example.scrumapppp.Controller;
-import com.example.scrumapppp.Session.UserSession;
 
-
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.text.Text;
-import javafx.stage.Stage;
-
-import java.io.IOException;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 
 public class TeamController {
+
     @FXML
-    private Text usernameText;
+    private TextField scrumboardNaamField;
 
-    public void initialize(){
-        usernameText.setText("Welkom " + UserSession.getUsername());
-        UserSession.getData();
-    }
+    @FXML
+    private TextField teamNaamField;
 
-    public void chatButtonClick(ActionEvent event){
-        System.out.println("Chat button clicked!");
-        try {
-            // Load the new FXML
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/Chat.fxml"));
-            Scene homeScene = new Scene(loader.load());
+    @FXML
+    private Button createButton;
 
-            // Get the current stage
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+    // De methode handleCreateButtonClick wordt aangeroepen vanuit de FXML file via onMouseClicked
+    @FXML
+    private void handleCreateButtonClick() {
+        String scrumboardNaam = scrumboardNaamField.getText();
+        String teamNaam = teamNaamField.getText();
 
-            // Set the new scene
-            stage.setScene(homeScene);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (scrumboardNaam != null && !scrumboardNaam.trim().isEmpty() && teamNaam != null && !teamNaam.trim().isEmpty()) {
+            System.out.println("Gecreëerd! Scrumboard Naam: " + scrumboardNaam + ", Team Naam: " + teamNaam);
+        } else {
+            System.out.println("Vul beide namen in!");
         }
     }
-
-    public void logOutButtonClick(ActionEvent event){
-        System.out.println("Register button clicked!");
-        try {
-            UserSession.clearSession();
-            // Load the new FXML
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/InlogScherm.fxml"));
-            Scene homeScene = new Scene(loader.load());
-
-            // Get the current stage
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-
-            // Set the new scene
-            stage.setScene(homeScene);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
 }
