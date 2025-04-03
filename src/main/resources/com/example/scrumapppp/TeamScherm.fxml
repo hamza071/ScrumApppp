@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<StackPane xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="com.example.scrumappppp.Controller.TeamController"
+           prefWidth="1920" prefHeight="1080">
+
+    <!-- Achtergrond -->
+    <ImageView fitWidth="1920" fitHeight="1080" preserveRatio="false">
+        <image>
+            <Image url="/com/example/scrumappppp/Image/achtergrond.jpg"/>
+        </image>
+    </ImageView>
+
+    <!-- Inhoud bovenop -->
+    <VBox alignment="CENTER" spacing="20">
+        <Label text="Selecteer een team:" style="-fx-text-fill: white; -fx-font-size: 22px;" />
+        <ComboBox fx:id="teamComboBox" prefWidth="300" style="-fx-font-size: 18px;" />
+        <Label text="Teamcode:" style="-fx-text-fill: white; -fx-font-size: 22px;" />
+        <TextField fx:id="teamCodeField" promptText="Voer teamcode in" prefWidth="300" style="-fx-font-size: 18px;" />
+        <Button fx:id="createTeamButton" text="Team Aanmaken"
+                prefWidth="300" prefHeight="50" style="-fx-font-size: 18px;" />
+    </VBox>
+
+</StackPane>
