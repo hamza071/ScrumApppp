@@ -34,13 +34,20 @@ public class InlogController {
     @FXML
     private Label statusLabel;
 
-    @FXML
-    private void handleInloggen(ActionEvent event) {
-        String gebruikersnaam = gebruikersnaamField.getText();
 
-        validateLogin(gebruikersnaam, event);
+    @FXML
+    private void handleInloggen() {
+        String gebruikersnaam = gebruikersnaamField.getText();
+        String wachtwoord = wachtwoordField.getText();
+
+        if (gebruikersnaam.equals("admin") && wachtwoord.equals("1234")) {
+            statusLabel.setText("Inloggen gelukt!");
+        } else {
+            statusLabel.setText("Ongeldige gebruikersnaam of wachtwoord.");
+        }
     }
 
+//    Created the register and login with Session🙂 _Danny_
     @FXML
     private void handleRegistreren(ActionEvent event){
         System.out.println("Register button clicked!");
