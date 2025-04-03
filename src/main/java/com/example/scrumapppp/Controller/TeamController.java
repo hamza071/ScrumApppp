@@ -1,4 +1,4 @@
-package com.example.scrumapppp.controller;
+package com.example.scrumapppp.Controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;

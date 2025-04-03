@@ -1,4 +1,4 @@
-package com.example.scrumapppp.application;
+package com.example.scrumapppp.Application;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
