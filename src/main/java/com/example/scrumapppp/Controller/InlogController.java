@@ -1,6 +1,6 @@
 package com.example.scrumapppp.Controller;
 
-import com.example.scrumapppp.DatabaseAndSQL.DatabaseConnection;
+import com.example.scrumapppp.DatabaseAndSQL.DBTest;
 import com.example.scrumapppp.Session.UserSession;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -55,7 +55,7 @@ public class InlogController {
     }
 
     private void validateLogin(String username, ActionEvent event) {
-        DatabaseConnection connectionNow = new DatabaseConnection();
+        DBTest connectionNow = new DBTest();
         Connection connectDB = connectionNow.getConnection();
 
         String verifyLoginQuery = "SELECT Gebruiker_ID, email FROM gebruiker WHERE naam = ?";

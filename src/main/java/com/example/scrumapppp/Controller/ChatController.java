@@ -1,6 +1,6 @@
 package com.example.scrumapppp.Controller;
 
-import com.example.scrumapppp.DatabaseAndSQL.DatabaseConnection;
+import com.example.scrumapppp.DatabaseAndSQL.DBTest;
 import com.example.scrumapppp.Session.UserSession;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -46,7 +46,7 @@ public class ChatController {
     public void showGebruiker() {
         String username = UserSession.getUsername();
         ObservableList<String> gebruikersList = FXCollections.observableArrayList();
-        DatabaseConnection connectionNow = new DatabaseConnection();
+        DBTest connectionNow = new DBTest();
         Connection connectDB = connectionNow.getConnection();
 
         String showAllUser = "SELECT naam FROM gebruiker WHERE naam <> ?";  // Changed column to match "naam"

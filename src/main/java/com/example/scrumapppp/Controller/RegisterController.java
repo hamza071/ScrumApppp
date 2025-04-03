@@ -1,6 +1,6 @@
 package com.example.scrumapppp.Controller;
 
-import com.example.scrumapppp.DatabaseAndSQL.DatabaseConnection;
+import com.example.scrumapppp.DatabaseAndSQL.DBTest;
 import com.example.scrumapppp.Session.UserSession;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,7 +16,7 @@ import java.sql.ResultSet;
 
 public class RegisterController {
     @FXML
-    DatabaseConnection databaseConnection = new DatabaseConnection();
+    DBTest databaseConnection = new DBTest();
     Connection connection = databaseConnection.getConnection();
 
 
