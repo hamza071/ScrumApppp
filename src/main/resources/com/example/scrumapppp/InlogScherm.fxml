@@ -19,6 +19,7 @@
     <PasswordField fx:id="wachtwoordField" promptText="Voer je wachtwoord in"/>
 
     <Button text="Inloggen" onAction="#handleInloggen"/>
+    <Button text="Registreren" onAction="#handleRegistreren"/>
 
     <Label fx:id="statusLabel" text=""/>
 </VBox>
