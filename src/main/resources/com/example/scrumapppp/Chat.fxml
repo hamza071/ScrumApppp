@@ -7,16 +7,21 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.scrumapppp.Controller.ChatController">
+<AnchorPane prefHeight="832.0" prefWidth="1176.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.scrumapppp.Controller.ChatController">
 
-    <ListView fx:id="gebruikersListView" layoutX="51.0" layoutY="49.0" prefHeight="278.0" prefWidth="500" />
-    <Button layoutX="451.0" layoutY="351.0" onAction="#createMessage" text="Verzend bericht" />
-   <TextField fx:id="textMessage" layoutX="50.0" layoutY="351.0" prefHeight="25.0" prefWidth="390.0" promptText="Bericht" />
+    <ListView fx:id="gebruikersListView" layoutX="51.0" layoutY="49.0" prefHeight="638.0" prefWidth="1078.0" />
+    <Button layoutX="1029.0" layoutY="719.0" onAction="#createMessage" text="Verzend bericht" />
+   <TextField fx:id="textMessage" layoutX="51.0" layoutY="719.0" prefHeight="25.0" prefWidth="970.0" promptText="Bericht" />
    <Label fx:id="teamName" layoutX="51.0" prefHeight="41.0" prefWidth="215.0" text="[Team Naam]">
       <font>
          <Font size="36.0" />
       </font>
    </Label>
+    <Button layoutX="920.0" layoutY="754.0" onAction="#deleteMessage" style="-fx-background-color: red;" text="Delete Message" />
+    <Button layoutX="800.0" layoutY="754.0" onAction="#updateMessage" style="-fx-background-color: green;" text="Update Message" />
+   <Button layoutX="599.0" layoutY="754.0" onAction="#createMessage" text="Koppel aan userstory" />
+   <Button layoutX="917.0" layoutY="14.0" onAction="#createMessage" text="Gekoppelde berichten aan userstory" />
+
 
 
 </AnchorPane>
