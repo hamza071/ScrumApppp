@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.example.scrumapppp.Controller.ChatController"
-            prefHeight="400.0" prefWidth="600.0">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.scrumapppp.Controller.ChatController">
 
-    <ListView fx:id="gebruikersListView" layoutX="50" layoutY="50" prefHeight="300" prefWidth="500"/>
-    <Button text="Chat starten" layoutX="50" layoutY="350" onAction="#startChat"/>
+    <ListView fx:id="gebruikersListView" layoutX="51.0" layoutY="49.0" prefHeight="278.0" prefWidth="500" />
+    <Button layoutX="451.0" layoutY="351.0" onAction="#createMessage" text="Verzend bericht" />
+   <TextField fx:id="textMessage" layoutX="50.0" layoutY="351.0" prefHeight="25.0" prefWidth="390.0" promptText="Bericht" />
+   <Label fx:id="teamName" layoutX="51.0" prefHeight="41.0" prefWidth="215.0" text="[Team Naam]">
+      <font>
+         <Font size="36.0" />
+      </font>
+   </Label>
 
 
 </AnchorPane>

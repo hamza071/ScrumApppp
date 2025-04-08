@@ -1,6 +1,6 @@
 package com.example.scrumapppp.Controller;
 
-import com.example.scrumapppp.DatabaseAndSQL.DBTest;
+import com.example.scrumapppp.DatabaseAndSQL.DatabaseConnection;
 import com.example.scrumapppp.Session.UserSession;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,7 +16,7 @@ import java.sql.ResultSet;
 
 public class RegisterController {
     @FXML
-    DBTest databaseConnection = new DBTest();
+    DatabaseConnection databaseConnection = new DatabaseConnection();
     Connection connection = databaseConnection.getConnection();
 
 
@@ -43,7 +43,7 @@ public class RegisterController {
 
 
         String insertQuery = "INSERT INTO gebruiker (naam, email) VALUES (?, ?)";
-        String selectData = "SELECT Gebruiker_ID, email FROM gebruiker WHERE naam = ?";
+        String selectData = "SELECT Gebruiker_ID, email, Team_ID FROM gebruiker WHERE naam = ?";
 
 
 
@@ -71,8 +71,10 @@ public class RegisterController {
                         int id = queryResult.getInt("Gebruiker_ID");
 //                        String userName = queryResult.getString("username");
 //                        String email = queryResult.getString("email");
+                        int teamID = queryResult.getInt("Team_ID");
 
-                        UserSession.setSession(id, userName, email);
+
+                        UserSession.setSession(id, userName, email, teamID);
                     } else {
                         System.out.println("No user found with the provided username.");
                     }

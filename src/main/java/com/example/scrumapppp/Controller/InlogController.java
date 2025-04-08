@@ -1,6 +1,6 @@
 package com.example.scrumapppp.Controller;
 
-import com.example.scrumapppp.DatabaseAndSQL.DBTest;
+import com.example.scrumapppp.DatabaseAndSQL.DatabaseConnection;
 import com.example.scrumapppp.Session.UserSession;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -55,10 +55,10 @@ public class InlogController {
     }
 
     private void validateLogin(String username, ActionEvent event) {
-        DBTest connectionNow = new DBTest();
+        DatabaseConnection connectionNow = new DatabaseConnection();
         Connection connectDB = connectionNow.getConnection();
 
-        String verifyLoginQuery = "SELECT Gebruiker_ID, email FROM gebruiker WHERE naam = ?";
+        String verifyLoginQuery = "SELECT Gebruiker_ID, email, Team_ID FROM gebruiker WHERE naam = ?";
 
         try (PreparedStatement preparedStatement = connectDB.prepareStatement(verifyLoginQuery)) {
             preparedStatement.setString(1, username);
@@ -67,8 +67,9 @@ public class InlogController {
             if (queryResult.next()) {
                 int id = queryResult.getInt("Gebruiker_ID");
                 String email = queryResult.getString("email");
+                int teamID = queryResult.getInt("Team_ID");
 
-                UserSession.setSession(id, username, email);
+                UserSession.setSession(id, username, email, teamID);
 
                 // Load the home scene after successful login
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/Team.fxml"));

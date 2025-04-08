@@ -1,0 +1,35 @@
+    //Deze code toont alle gebruikers behalve je eigen account. Zie sql statement
+
+    public void showGebruiker() {
+        String username = UserSession.getUsername();
+        ObservableList<String> gebruikersList = FXCollections.observableArrayList();
+        DatabaseConnection connectionNow = new DatabaseConnection();
+        Connection connectDB = connectionNow.getConnection();
+
+        String showAllUser = "SELECT naam FROM gebruiker WHERE naam <> ?";  // Changed column to match "naam"
+
+        try (PreparedStatement preparedStatement = connectDB.prepareStatement(showAllUser)) {
+            preparedStatement.setString(1, username); // Set the username parameter
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    String naam = resultSet.getString("naam");
+                    gebruikersList.add(naam);  // Add user name to the list
+                }
+            }
+
+            // Populate the ListView
+            gebruikersListView.setItems(gebruikersList);
+
+        } catch (SQLException e) {
+            e.printStackTrace(); // Handle the exception properly in a real application
+        } finally {
+            try {
+                if (connectDB != null) {
+                    connectDB.close(); // Close connection to avoid memory leaks
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }

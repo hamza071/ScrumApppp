@@ -6,21 +6,23 @@ public class UserSession {
 
     private int id;
     private String username;
-    private String email;// Add other fields as needed
+    private String email;
+    private int teamID;// Add other fields as needed
 
 
-    private UserSession(int id, String username, String email)
+    private UserSession(int id, String username, String email, int teamID)
     {
         this.id = id;
         this.username = username;
         this.email = email;
+        this.teamID = teamID;
     }
 
     // Singleton instance getter
-    public static void setSession(int id, String username, String email) {
+    public static void setSession(int id, String username, String email, int teamID) {
         if (setSession == null) {
-            setSession = new UserSession(id, username, email);
-            System.out.println("Session created: " + id + ", " + username + ", " + email);
+            setSession = new UserSession(id, username, email, teamID);
+            System.out.println("Session created: " + id + ", " + username + ", " + email + ", " + teamID);
         } else if(UserSession.getSession() == null){
             System.out.println("User is not logged in!");
         } else{
@@ -59,11 +61,20 @@ public class UserSession {
         }
     }
 
+    public static int getTeamID(){
+        if (setSession != null) {
+            return setSession.teamID;  // Return the username from the current session
+        } else {
+            return 0;  // Return a default message if no session is active
+        }
+    }
+
     public static String getData(){
         return "UserSession{" +
                 "id=" + setSession.id +
                 ", username='" + setSession.username + '\'' +
                 ", email='" + setSession.email + '\'' +
+                ", Team ID='" + setSession.teamID + '\'' +
                 '}';
     }
 
@@ -80,6 +91,7 @@ public class UserSession {
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
+                ", Team ID='" + teamID + '\'' +
                 '}';
     }
 }
