@@ -5,19 +5,17 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class InlogApplication extends Application {
+public class RegistreerApplication extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/InlogScherm.fxml"));
+        // Laad het FXML bestand voor het registratiescherm
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/RegistreerScherm.fxml"));
         Scene scene = new Scene(loader.load());
 
-        primaryStage.setTitle("Inloggen");
+        // Zet de titel van de window en toon het
+        primaryStage.setTitle("Registreren");
         primaryStage.setScene(scene);
-
-        // Maak het venster full-screen
-        primaryStage.setMaximized(true); // Maximaliseer het venster
-        primaryStage.setFullScreen(true); // Zet op full-screen (druk op ESC om te sluiten)
-
+        primaryStage.setFullScreen(true);  // Optioneel: zet de applicatie full screen
         primaryStage.show();
     }
 
