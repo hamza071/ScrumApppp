@@ -1,58 +1,33 @@
 package com.example.scrumapppp.Controller;
-import com.example.scrumapppp.Session.UserSession;
-
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.text.Text;
-import javafx.stage.Stage;
-
-import java.io.IOException;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 
 public class TeamController {
+
+    // Deze methode wordt aangeroepen wanneer de chat-knop wordt geklikt
     @FXML
-    private Text usernameText;
-
-    public void initialize(){
-        usernameText.setText("Welkom " + UserSession.getUsername());
-        UserSession.getData();
-    }
-
-    public void chatButtonClick(ActionEvent event){
+    private void chatButtonClick(ActionEvent event) {
         System.out.println("Chat button clicked!");
-        try {
-            // Load the new FXML
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/Chat.fxml"));
-            Scene homeScene = new Scene(loader.load());
-
-            // Get the current stage
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-
-            // Set the new scene
-            stage.setScene(homeScene);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // Voeg hier de gewenste functionaliteit toe voor de chatknop
+        showAlert("Chatfunctie", "De chatfunctie wordt binnenkort toegevoegd!", AlertType.INFORMATION);
     }
 
-    public void logOutButtonClick(ActionEvent event){
-        System.out.println("Register button clicked!");
-        try {
-            UserSession.clearSession();
-            // Load the new FXML
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/InlogScherm.fxml"));
-            Scene homeScene = new Scene(loader.load());
-
-            // Get the current stage
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-
-            // Set the new scene
-            stage.setScene(homeScene);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    // Deze methode kan voor de uitlogknop zijn
+    @FXML
+    private void logOutButtonClick(ActionEvent event) {
+        System.out.println("Uitloggen clicked!");
+        // Voeg hier de uitloglogica toe
     }
 
+    // Een eenvoudige alert methode om een bericht te tonen
+    private void showAlert(String title, String content, AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
 }
