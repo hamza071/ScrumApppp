@@ -5,11 +5,16 @@ import com.example.scrumapppp.Handlers.ChatMessage;
 import com.example.scrumapppp.Session.UserSession;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -249,6 +254,32 @@ public class ChatController {
             }
         } else {
             System.out.println("No message selected for update or the message is empty.");
+        }
+    }
+
+//    Koppel the userstories to chat navigate
+    @FXML
+    private void connectUserstory(ActionEvent event){
+        System.out.println("Userstory button clicked!");
+        try {
+            System.out.println("Test😉");
+            // Laad de registratie FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/UserstoryKiesScherm.fxml"));
+            Scene userstoryScene = new Scene(loader.load());
+            System.out.println("Test 2😉");
+
+
+            // Verkrijg de huidige stage
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+
+            // Zet de nieuwe scene
+            stage.setScene(userstoryScene);
+
+            // Zet fullscreen AAN
+            stage.setFullScreen(true);
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

@@ -6,23 +6,21 @@ public class UserSession {
 
     private int id;
     private String username;
-    private String email;
     private int teamID;// Add other fields as needed
 
 
-    private UserSession(int id, String username, String email, int teamID)
+    private UserSession(int id, String username, int teamID)
     {
         this.id = id;
         this.username = username;
-        this.email = email;
         this.teamID = teamID;
     }
 
     // Singleton instance getter
-    public static void setSession(int id, String username, String email, int teamID) {
+    public static void setSession(int id, String username, int teamID) {
         if (setSession == null) {
-            setSession = new UserSession(id, username, email, teamID);
-            System.out.println("Session created: " + id + ", " + username + ", " + email + ", " + teamID);
+            setSession = new UserSession(id, username, teamID);
+            System.out.println("Session created: " + id + ", " + username +  ", " + teamID);
         } else if(UserSession.getSession() == null){
             System.out.println("User is not logged in!");
         } else{
@@ -40,15 +38,6 @@ public class UserSession {
             // the current session
         } else {
             return "No user logged in";  // Return a default message if no session is active
-        }
-    }
-
-
-    public static String getEmail() {
-        if (setSession != null) {
-            return setSession.email;  // Return the username from the current session
-        } else {
-            return "No user is logged in";  // Return a default message if no session is active
         }
     }
 
@@ -73,7 +62,6 @@ public class UserSession {
         return "UserSession{" +
                 "id=" + setSession.id +
                 ", username='" + setSession.username + '\'' +
-                ", email='" + setSession.email + '\'' +
                 ", Team ID='" + setSession.teamID + '\'' +
                 '}';
     }
@@ -90,7 +78,6 @@ public class UserSession {
         return "UserSession{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
                 ", Team ID='" + teamID + '\'' +
                 '}';
     }

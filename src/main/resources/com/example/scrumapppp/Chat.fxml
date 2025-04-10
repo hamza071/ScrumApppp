@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="832.0" prefWidth="1176.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.scrumapppp.Controller.ChatController">
+<AnchorPane prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.scrumapppp.Controller.ChatController">
 
     <ListView fx:id="gebruikersListView" layoutX="51.0" layoutY="49.0" prefHeight="638.0" prefWidth="1078.0" />
     <Button layoutX="1029.0" layoutY="719.0" onAction="#createMessage" text="Verzend bericht" />
@@ -19,7 +19,7 @@
    </Label>
     <Button layoutX="920.0" layoutY="754.0" onAction="#deleteMessage" style="-fx-background-color: red;" text="Delete Message" />
     <Button layoutX="800.0" layoutY="754.0" onAction="#updateMessage" style="-fx-background-color: green;" text="Update Message" />
-   <Button layoutX="599.0" layoutY="754.0" onAction="#createMessage" text="Koppel aan userstory" />
+   <Button layoutX="599.0" layoutY="754.0" onAction="#connectUserstory" text="Koppel aan userstory" />
    <Button layoutX="917.0" layoutY="14.0" onAction="#createMessage" text="Gekoppelde berichten aan userstory" />
 
 
