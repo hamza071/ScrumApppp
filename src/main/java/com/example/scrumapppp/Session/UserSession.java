@@ -1,66 +1,65 @@
 package com.example.scrumapppp.Session;
 
-//This class will show the userdata after the user is logged in.
 public class UserSession {
     private static UserSession setSession;
 
     private int id;
-    private String username;  // Add other fields as needed
+    private String username;
+    private int teamId;
 
-
-    private UserSession(int id, String username)
-    {
+    private UserSession(int id, String username, int teamId) {
         this.id = id;
         this.username = username;
+        this.teamId = teamId;
     }
 
-    // Singleton instance getter
-    public static void setSession(int id, String username, String phonenumber) {
+    public static void setSession(int id, String username, int teamId) {
         if (setSession == null) {
-            setSession = new UserSession(id, username);
-            System.out.println("Session created: " + id + ", " + username);
-        } else if(UserSession.getSession() == null){
-            System.out.println("User is not logged in!");
-        } else{
-            System.out.println("Session has already been created🤓.");
+            setSession = new UserSession(id, username, teamId);
+            System.out.println("Session created: " + id + ", " + username + ", Team ID: " + teamId);
+        } else {
+            System.out.println("Session already exists.");
         }
     }
 
-    public static UserSession getSession(){
+    public static UserSession getSession() {
         return setSession;
     }
 
-    // 💀Clear the session
+    public static String getUsername() {
+        if (setSession != null) {
+            return setSession.username;
+        } else {
+            return "No user logged in";
+        }
+    }
+
+    public static int getId() {
+        if (setSession != null) {
+            return setSession.id;
+        } else {
+            return 0;
+        }
+    }
+
+    public static int getTeamId() {
+        if (setSession != null) {
+            return setSession.teamId;
+        } else {
+            return 0;
+        }
+    }
+
     public static void clearSession() {
         setSession = null;
     }
 
-    public static String getUsername(){
-        if (setSession != null) {
-            return setSession.username;  // Return the username from
-            // the current session
-        } else {
-            return "No user logged in";  // Return a default message if no session is active
-        }
-    }
-
-
-    public static int getID(){
-        if (setSession != null) {
-            return setSession.id;  // Return the username from the current session
-        } else {
-            return 0;  // Return a default message if no session is active
-        }
-    }
-
-
-    // Optional: Add a toString method for debugging
     @Override
     public String toString() {
         return "UserSession{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
+                ", teamId=" + teamId +
                 '}';
     }
 }
-
