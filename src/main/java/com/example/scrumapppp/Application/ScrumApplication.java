@@ -13,6 +13,7 @@ public class ScrumApplication extends Application {
         Scene scene = new Scene(loader.load());
         primaryStage.setTitle("Scrum Board");
         primaryStage.setScene(scene);
+        // primaryStage.setFullScreen(true); // 👉 Deze lijn is nu weg!
         primaryStage.show();
     }
 

@@ -1,6 +1,6 @@
 package com.example.scrumapppp.Controller;
 
-import com.example.scrumapppp.DatabaseAndSQL.DatabaseConnection;
+import com.example.scrumapppp.DatabaseAndSQL.DatabaseManager;
 import com.example.scrumapppp.Session.UserSession;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -24,10 +24,6 @@ import java.sql.SQLException;
 public class InlogController {
 
     @FXML
-    DatabaseConnection databaseConnection = new DatabaseConnection();
-    Connection connection = databaseConnection.getConnection();
-
-    @FXML
     private TextField gebruikersnaamField;
 
     @FXML
@@ -36,51 +32,46 @@ public class InlogController {
     @FXML
     private Label statusLabel;
 
-    // Methode om in te loggen
     @FXML
     private void handleInloggen(ActionEvent event) {
         String gebruikersnaam = gebruikersnaamField.getText();
         String wachtwoord = wachtwoordField.getText();
 
-        // Haal de opgeslagen hash op van de gebruiker uit de database
+        // Haal opgeslagen wachtwoord hash uit database
         String storedPasswordHash = getStoredPasswordHash(gebruikersnaam);
 
         if (storedPasswordHash != null) {
-            // Genereer de hash van het ingevoerde wachtwoord
             String enteredPasswordHash = hashWachtwoord(wachtwoord);
 
-            // Vergelijk de hashes
             if (enteredPasswordHash.equals(storedPasswordHash)) {
                 statusLabel.setText("Inloggen gelukt!");
 
-                // Haal extra informatie op, zoals gebruiker ID en email
-                try (Connection connectDB = databaseConnection.getConnection()) {
-                    String query = "SELECT Gebruiker_ID FROM gebruiker WHERE naam = ?";
-                    PreparedStatement preparedStatement = connectDB.prepareStatement(query);
+                // Haal Gebruiker_ID en Team_ID op
+                try (Connection conn = DatabaseManager.getConnection()) {
+                    String query = "SELECT Gebruiker_ID, Team_ID FROM gebruiker WHERE naam = ?";
+                    PreparedStatement preparedStatement = conn.prepareStatement(query);
                     preparedStatement.setString(1, gebruikersnaam);
-                    ResultSet queryResult = preparedStatement.executeQuery();
+                    ResultSet resultSet = preparedStatement.executeQuery();
 
-                    if (queryResult.next()) {
-                        int id = queryResult.getInt("Gebruiker_ID");
+                    if (resultSet.next()) {
+                        int id = resultSet.getInt("Gebruiker_ID");
+                        int teamId = resultSet.getInt("Team_ID");
 
                         // Start de gebruikerssessie
-                        UserSession.setSession(id, gebruikersnaam, null);
+                        UserSession.setSession(id, gebruikersnaam, teamId);
 
-                        // Laad de nieuwe scene na inloggen
+                        // Laad nieuwe scene
                         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/Team.fxml"));
                         Scene homeScene = new Scene(loader.load());
 
                         Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
                         stage.setScene(homeScene);
-
-                        // Zet de applicatie fullscreen
                         stage.setFullScreen(true);
                     }
                 } catch (SQLException | IOException e) {
                     e.printStackTrace();
-                    statusLabel.setText("Er is een fout opgetreden bij het laden van de gebruikersgegevens.");
+                    statusLabel.setText("Fout bij laden gebruiker!");
                 }
-
             } else {
                 statusLabel.setText("Ongeldige gebruikersnaam of wachtwoord.");
             }
@@ -89,27 +80,23 @@ public class InlogController {
         }
     }
 
-    // Methode om de opgeslagen wachtwoordhash op te halen uit de database
     private String getStoredPasswordHash(String gebruikersnaam) {
-        try (Connection dbConnection = databaseConnection.getConnection()) {
+        try (Connection conn = DatabaseManager.getConnection()) {
             String query = "SELECT wachtwoord FROM gebruiker WHERE naam = ?";
-
-            try (PreparedStatement stmt = dbConnection.prepareStatement(query)) {
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
                 stmt.setString(1, gebruikersnaam);
                 ResultSet rs = stmt.executeQuery();
-
                 if (rs.next()) {
-                    return rs.getString("wachtwoord");  // Retourneer het gehashte wachtwoord
+                    return rs.getString("wachtwoord");
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            showAlert("Databasefout", "Er is een fout opgetreden bij het ophalen van het wachtwoord.", AlertType.ERROR);
+            showAlert("Databasefout", "Fout bij ophalen wachtwoord.", AlertType.ERROR);
         }
-        return null;  // Geen wachtwoord gevonden
+        return null;
     }
 
-    // Methode om een wachtwoord te hashen
     private String hashWachtwoord(String wachtwoord) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -125,22 +112,14 @@ public class InlogController {
         }
     }
 
-    // Methode voor registreren (verwijst naar registratiepagina)
     @FXML
     private void handleRegistreren(ActionEvent event) {
-        System.out.println("Register button clicked!");
         try {
-            // Laad de registratie FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/RegistreerScherm.fxml"));
             Scene registerScene = new Scene(loader.load());
 
-            // Verkrijg de huidige stage
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-
-            // Zet de nieuwe scene
             stage.setScene(registerScene);
-
-            // Zet fullscreen AAN
             stage.setFullScreen(true);
 
         } catch (IOException e) {
@@ -148,8 +127,7 @@ public class InlogController {
         }
     }
 
-    // Voeg de showAlert methode hier toe
-    private void showAlert(String title, String content, Alert.AlertType type) {
+    private void showAlert(String title, String content, AlertType type) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(null);
