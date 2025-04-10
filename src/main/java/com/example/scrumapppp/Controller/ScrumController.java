@@ -1,15 +1,21 @@
 package com.example.scrumapppp.Controller;
 
-import com.example.scrumapppp.DatabaseAndSQL.LijstDAO;
-import com.example.scrumapppp.DatabaseAndSQL.UserstoryDAO;
 import com.example.scrumapppp.DatabaseAndSQL.Lijst;
+import com.example.scrumapppp.DatabaseAndSQL.LijstDAO;
 import com.example.scrumapppp.DatabaseAndSQL.Userstory;
+import com.example.scrumapppp.DatabaseAndSQL.UserstoryDAO;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.control.Label;
+import javafx.stage.Stage;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,28 +26,31 @@ public class ScrumController {
 
     private LijstDAO lijstDAO;
     private UserstoryDAO userstoryDAO;
+    private int teamId = 1; // tijdelijk hardcoded
 
     @FXML
     private void initialize() {
         lijstDAO = new LijstDAO();
         userstoryDAO = new UserstoryDAO();
 
-        int teamId = 1; //UserSession.getTeamId(); // 🔥 Gebruikt nu de juiste team ID van de user
+        laadBoard();
 
-        // Haal alle lijsten op voor het team
+        // Voeg knop toe om nieuwe lijst te maken
+        Button voegLijstToeKnop = new Button("+ Voeg een lijst toe");
+        voegLijstToeKnop.setOnAction(e -> maakNieuweLijst());
+        boardHBox.getChildren().add(voegLijstToeKnop);
+    }
+
+    private void laadBoard() {
+        boardHBox.getChildren().clear();
         List<Lijst> lijsten = lijstDAO.getLijstenByTeamId(teamId);
         for (Lijst lijst : lijsten) {
             VBox lijstBox = maakLijst(lijst);
             boardHBox.getChildren().add(lijstBox);
         }
-
-        // Voeg knop toe om nieuwe lijst te maken
-        Button voegLijstToeKnop = new Button("+ Voeg een lijst toe");
-        voegLijstToeKnop.setOnAction(e -> maakNieuweLijst(teamId));
-        boardHBox.getChildren().add(voegLijstToeKnop);
     }
 
-    private void maakNieuweLijst(int teamId) {
+    private void maakNieuweLijst() {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Nieuwe Lijst");
         dialog.setHeaderText(null);
@@ -49,7 +58,6 @@ public class ScrumController {
 
         Optional<String> resultaat = dialog.showAndWait();
         resultaat.ifPresent(naam -> {
-            // Voeg lijst toe aan database
             Lijst nieuweLijst = lijstDAO.createLijst(teamId, naam);
             if (nieuweLijst != null) {
                 VBox lijstBox = maakLijst(nieuweLijst);
@@ -68,7 +76,33 @@ public class ScrumController {
 
         VBox userStoriesBox = new VBox(5);
 
-        // Haal alle userstories voor deze lijst
+        // 👉 Maak deze lijst dropbaar
+        userStoriesBox.setOnDragOver(event -> {
+            if (event.getGestureSource() != userStoriesBox && event.getDragboard().hasString()) {
+                event.acceptTransferModes(TransferMode.MOVE);
+            }
+            event.consume();
+        });
+
+        userStoriesBox.setOnDragDropped(event -> {
+            Dragboard db = event.getDragboard();
+            boolean success = false;
+            if (db.hasString()) {
+                int userstoryId = Integer.parseInt(db.getString());
+
+                // Update de userstory naar de nieuwe lijst
+                userstoryDAO.updateUserstoryLijst(userstoryId, lijst.getLijstId());
+
+                // Refresh het board zodat alles goed staat
+                laadBoard();
+
+                success = true;
+            }
+            event.setDropCompleted(success);
+            event.consume();
+        });
+
+        // Haal userstories op
         List<Userstory> userstories = userstoryDAO.getUserstoriesByLijstId(lijst.getLijstId());
         for (Userstory userstory : userstories) {
             voegUserstoryToeAanBox(userStoriesBox, userstory);
@@ -99,10 +133,21 @@ public class ScrumController {
     private void voegUserstoryToeAanBox(VBox userStoriesBox, Userstory userstory) {
         Button userStoryKnop = new Button(userstory.getTitel());
         userStoryKnop.setMaxWidth(Double.MAX_VALUE);
+
         userStoryKnop.setOnAction(e -> {
             System.out.println("Geklikt op userstory: " + userstory.getTitel());
-            // Later popup voor beschrijving/chat
+            // hier kan popup voor beschrijving komen
         });
+
+        // 👉 Maak userstory sleebaar
+        userStoryKnop.setOnDragDetected(event -> {
+            Dragboard db = userStoryKnop.startDragAndDrop(TransferMode.MOVE);
+            ClipboardContent content = new ClipboardContent();
+            content.putString(String.valueOf(userstory.getUserstoryId()));
+            db.setContent(content);
+            event.consume();
+        });
+
         userStoriesBox.getChildren().add(userStoryKnop);
     }
 }

@@ -35,7 +35,8 @@ public class UserstoryDAO {
     public Userstory createUserstory(int lijstId, String titel, String beschrijving) {
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
-                     "INSERT INTO userstory (Lijst_ID, titel, beschrijving) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+                     "INSERT INTO userstory (Lijst_ID, titel, beschrijving) VALUES (?, ?, ?)",
+                     Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setInt(1, lijstId);
             stmt.setString(2, titel);
@@ -54,5 +55,21 @@ public class UserstoryDAO {
         }
 
         return null;
+    }
+
+    // ⭐ Nieuw toegevoegd voor slepen en verplaatsen
+    public void updateUserstoryLijst(int userstoryId, int nieuweLijstId) {
+        String sql = "UPDATE userstory SET Lijst_ID = ? WHERE Userstory_ID = ?";
+
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, nieuweLijstId);
+            stmt.setInt(2, userstoryId);
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
