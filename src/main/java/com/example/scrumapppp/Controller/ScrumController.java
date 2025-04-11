@@ -1,6 +1,8 @@
 package com.example.scrumapppp.Controller;
 
 import com.example.scrumapppp.DatabaseAndSQL.*;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -8,10 +10,9 @@ import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import javafx.scene.layout.Region;
-import javafx.scene.layout.Priority;
-
+import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +38,13 @@ public class ScrumController {
         Button voegLijstToeKnop = new Button("+ Voeg een lijst toe");
         voegLijstToeKnop.setOnAction(e -> maakNieuweLijst());
         boardHBox.getChildren().add(voegLijstToeKnop);
+
+        // 🔥 Auto-refresh elke 5 seconden
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.seconds(5), e -> laadBoard())
+        );
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
     }
 
     private void laadBoard() {
@@ -145,7 +153,6 @@ public class ScrumController {
         VBox layout = new VBox(10);
         layout.setStyle("-fx-padding: 20;");
 
-        // Beschrijving
         Label beschrijvingLabel = new Label("Beschrijving:");
         TextArea beschrijvingArea = new TextArea(userstory.getBeschrijving());
         beschrijvingArea.setWrapText(true);
@@ -157,7 +164,6 @@ public class ScrumController {
             userstoryDAO.updateUserstoryBeschrijving(userstory.getUserstoryId(), nieuweBeschrijving);
         });
 
-        // Taken
         Label takenLabel = new Label("Taken:");
         VBox takenBox = new VBox(5);
 
@@ -173,7 +179,6 @@ public class ScrumController {
             taakDialog.setTitle("Nieuwe Taak");
             taakDialog.setHeaderText(null);
             taakDialog.setContentText("Geef een titel voor de taak:");
-
             Optional<String> taakResultaat = taakDialog.showAndWait();
             taakResultaat.ifPresent(taakTitel -> {
                 Taak nieuweTaak = taakDAO.createTaak(userstory.getUserstoryId(), taakTitel);
@@ -184,17 +189,15 @@ public class ScrumController {
             });
         });
 
-        // Spacer om delete knop naar beneden te drukken
         Region spacer = new Region();
         VBox.setVgrow(spacer, Priority.ALWAYS);
 
-        // Verwijder Userstory knop (rechtsonder)
         Button verwijderUserstoryBtn = new Button("❌ Verwijder User Story");
         verwijderUserstoryBtn.setStyle("-fx-background-color: red; -fx-text-fill: white;");
         verwijderUserstoryBtn.setOnAction(event -> {
             userstoryDAO.deleteUserstory(userstory.getUserstoryId());
             popupStage.close();
-            laadBoard(); // Refresh board
+            laadBoard();
         });
 
         HBox deleteBox = new HBox();
@@ -202,14 +205,9 @@ public class ScrumController {
         deleteBox.getChildren().add(verwijderUserstoryBtn);
 
         layout.getChildren().addAll(
-                beschrijvingLabel,
-                beschrijvingArea,
-                opslaanBtn,
-                takenLabel,
-                takenBox,
-                voegTaakToeBtn,
-                spacer,          // duwt alles omhoog
-                deleteBox        // delete knop rechts onder
+                beschrijvingLabel, beschrijvingArea, opslaanBtn,
+                takenLabel, takenBox, voegTaakToeBtn,
+                spacer, deleteBox
         );
 
         Scene scene = new Scene(layout, 400, 600);
@@ -228,13 +226,11 @@ public class ScrumController {
             takenBox.getChildren().removeIf(node -> node == deleteTaakBtn.getParent());
         });
 
-        // Maak een lege spacer tussen checkbox en delete knop
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         HBox taakItem = new HBox(5, taakCheckBox, spacer, deleteTaakBtn);
-        taakItem.setFillHeight(true); // zorgt dat alles netjes gecentreerd blijft
-
+        taakItem.setFillHeight(true);
         return taakItem;
     }
 }
