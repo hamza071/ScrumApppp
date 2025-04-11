@@ -27,19 +27,19 @@ public class ScrumController {
     private TaakDAO taakDAO;
     private int teamId = 1; // tijdelijk hardcoded
 
+    private Button voegLijstToeKnop; // 👈 maak het een field
+
     @FXML
     private void initialize() {
         lijstDAO = new LijstDAO();
         userstoryDAO = new UserstoryDAO();
         taakDAO = new TaakDAO();
 
+        voegLijstToeKnop = new Button("+ Voeg een lijst toe");
+        voegLijstToeKnop.setOnAction(e -> maakNieuweLijst());
+
         laadBoard();
 
-        Button voegLijstToeKnop = new Button("+ Voeg een lijst toe");
-        voegLijstToeKnop.setOnAction(e -> maakNieuweLijst());
-        boardHBox.getChildren().add(voegLijstToeKnop);
-
-        // 🔥 Auto-refresh elke 5 seconden
         Timeline timeline = new Timeline(
                 new KeyFrame(Duration.seconds(5), e -> laadBoard())
         );
@@ -50,10 +50,13 @@ public class ScrumController {
     private void laadBoard() {
         boardHBox.getChildren().clear();
         List<Lijst> lijsten = lijstDAO.getLijstenByTeamId(teamId);
+
         for (Lijst lijst : lijsten) {
             VBox lijstBox = maakLijst(lijst);
             boardHBox.getChildren().add(lijstBox);
         }
+
+        boardHBox.getChildren().add(voegLijstToeKnop); // Voeg knop steeds opnieuw toe
     }
 
     private void maakNieuweLijst() {
@@ -66,8 +69,7 @@ public class ScrumController {
         resultaat.ifPresent(naam -> {
             Lijst nieuweLijst = lijstDAO.createLijst(teamId, naam);
             if (nieuweLijst != null) {
-                VBox lijstBox = maakLijst(nieuweLijst);
-                boardHBox.getChildren().add(boardHBox.getChildren().size() - 1, lijstBox);
+                laadBoard(); // Laad alles opnieuw zodat de nieuwe lijst erbij staat
             }
         });
     }
@@ -124,7 +126,7 @@ public class ScrumController {
         resultaat.ifPresent(titel -> {
             Userstory nieuweUserstory = userstoryDAO.createUserstory(lijst.getLijstId(), titel, "");
             if (nieuweUserstory != null) {
-                voegUserstoryToeAanBox(userStoriesBox, nieuweUserstory);
+                laadBoard(); // Update hele board zodat anderen het ook zien
             }
         });
     }
