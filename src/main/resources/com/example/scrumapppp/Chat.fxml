@@ -19,7 +19,7 @@
    </Label>
     <Button layoutX="920.0" layoutY="754.0" onAction="#deleteMessage" style="-fx-background-color: red;" text="Delete Message" />
     <Button layoutX="800.0" layoutY="754.0" onAction="#updateMessage" style="-fx-background-color: green;" text="Update Message" />
-   <Button layoutX="599.0" layoutY="754.0" onAction="#connectUserstory" text="Koppel aan userstory" />
+   <Button layoutX="599.0" layoutY="754.0" onAction="#connectChat" text="Koppel aan userstory" />
    <Button layoutX="917.0" layoutY="14.0" onAction="#createMessage" text="Gekoppelde berichten aan userstory" />
 
 

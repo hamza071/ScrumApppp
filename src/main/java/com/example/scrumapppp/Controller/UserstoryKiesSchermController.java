@@ -1,5 +1,6 @@
 package com.example.scrumapppp.Controller;
 
+import com.example.scrumapppp.Handlers.ChatMessage;
 import com.example.scrumapppp.Handlers.UserstoryList;
 import com.example.scrumapppp.Session.UserSession;
 import com.example.scrumapppp.DatabaseAndSQL.DatabaseConnection;
@@ -34,11 +35,15 @@ public class UserstoryKiesSchermController {
         userstoryListListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 selectedUserstory = newValue.toString();
-                System.out.println("Selected userstory: " + selectedUserstory);
-//                A function where it updates the userstory to the team_id.
+                int selectedUserstoryId = newValue.getId(); // Je hebt deze al in je UserstoryList class neem ik aan?
 
+                // 🔐 Sla het op in de sessie
+                UserSession.setSelectedUserstoryId(selectedUserstoryId);
+
+                System.out.println("Selected userstory: " + selectedUserstory + " (ID: " + selectedUserstoryId + ")");
             }
         });
+
     }
 
     // Method to fetch the team name and display it
@@ -107,4 +112,48 @@ public class UserstoryKiesSchermController {
             }
         }
     }
+
+    @FXML
+    public void updateUserstoryWithChat() {
+        // Stap 1: Ophalen van geselecteerde user story
+        UserstoryList selectedUserstory = userstoryListListView.getSelectionModel().getSelectedItem();
+
+        if (selectedUserstory == null) {
+            System.out.println("Geen userstory geselecteerd.");
+            return;
+        }
+
+        int selectedUserstoryId = selectedUserstory.getId();
+
+        // Stel dat je Chat_ID via UserSession meekrijgt, bijvoorbeeld:
+        int selectedChatId = UserSession.getSelectedUserstoryId();  // Zorg dat deze bestaat
+
+        // Stap 2: Database update uitvoeren
+        DatabaseConnection connectionNow = new DatabaseConnection();
+        Connection connectDB = connectionNow.getConnection();
+
+        String updateQuery = "UPDATE chat SET Userstory_ID = ? WHERE Chat_ID = ?";
+
+        try (PreparedStatement preparedStatement = connectDB.prepareStatement(updateQuery)) {
+            preparedStatement.setInt(1, selectedUserstoryId);
+            preparedStatement.setInt(2, selectedChatId);
+
+            int rowsUpdated = preparedStatement.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("Chatbericht succesvol gekoppeld aan userstory ID: " + selectedUserstoryId);
+            } else {
+                System.out.println("Geen chatbericht geüpdatet.");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (connectDB != null) connectDB.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }

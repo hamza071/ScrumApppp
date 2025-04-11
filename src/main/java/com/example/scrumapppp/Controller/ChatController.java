@@ -48,15 +48,6 @@ public class ChatController {
         });
     }
 
-    @FXML
-    private void pinMessage() {
-        String message = textMessage.getText();
-        if (selectedUser != null && !message.isEmpty()) {
-            System.out.println("Sending message to " + selectedUser + ": " + message);
-        } else {
-            System.out.println("No user selected or message is empty.");
-        }
-    }
 
     public void showTeamName() {
         DatabaseConnection connectionNow = new DatabaseConnection();
@@ -259,12 +250,12 @@ public class ChatController {
 
 //    Koppel the userstories to chat navigate
     @FXML
-    private void connectUserstory(ActionEvent event){
+    private void connectChat(ActionEvent event){
         System.out.println("Userstory button clicked!");
         try {
             System.out.println("Test😉");
             // Laad de registratie FXML
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/UserstoryKiesScherm.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/ChatKiesScherm.fxml"));
             Scene userstoryScene = new Scene(loader.load());
             System.out.println("Test 2😉");
 

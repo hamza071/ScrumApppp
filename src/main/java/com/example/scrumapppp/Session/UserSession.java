@@ -7,6 +7,8 @@ public class UserSession {
     private int id;
     private String username;
     private int teamID;// Add other fields as needed
+    // Add this in UserSession.java
+    private static int selectedUserstoryId;
 
 
     private UserSession(int id, String username, int teamID)
@@ -70,6 +72,17 @@ public class UserSession {
     public static void clearSession() {
         setSession = null;
     }
+
+//    Userstory, outside the user-id class
+    public static void setSelectedUserstoryId(int id) {
+        selectedUserstoryId = id;
+        System.out.println("Selected Userstory ID set: " + id);
+    }
+
+    public static int getSelectedUserstoryId() {
+        return selectedUserstoryId;
+    }
+
 
 
     // Optional: Add a toString method for debugging
