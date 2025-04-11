@@ -251,7 +251,7 @@ public class ChatController {
 //    Koppel the userstories to chat navigate
     @FXML
     private void connectChat(ActionEvent event){
-        System.out.println("Userstory button clicked!");
+        System.out.println("Chat😂 button clicked!");
         try {
             System.out.println("Test😉");
             // Laad de registratie FXML
