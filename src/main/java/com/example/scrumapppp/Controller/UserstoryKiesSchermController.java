@@ -90,20 +90,20 @@ public class UserstoryKiesSchermController {
         DatabaseConnection connectionNow = new DatabaseConnection();
         Connection connectDB = connectionNow.getConnection();
 
-        String query = "SELECT Userstory_ID, titel, beschrijving, status FROM userstory WHERE Team_ID = ?";
+        String query = "SELECT Userstory_ID, titel, beschrijving FROM userstory WHERE Team_ID = ?";
 
         try (PreparedStatement preparedStatement = connectDB.prepareStatement(query)) {
-            preparedStatement.setInt(1, UserSession.getTeamID());
 
+            preparedStatement.setInt(1, UserSession.getTeamID());
+            System.out.println("😂:"+ preparedStatement);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
                 int id = resultSet.getInt("Userstory_ID");
                 String text = resultSet.getString("titel");
                 String beschrijving = resultSet.getString("beschrijving");
-                String status = resultSet.getString("status");
 
-                userstories.add(new UserstoryList(id, text, beschrijving, status));  // Add the user story to the list
+                userstories.add(new UserstoryList(id, text, beschrijving));  // Add the user story to the list
             }
 
             // Set the ListView with the user stories
@@ -122,7 +122,7 @@ public class UserstoryKiesSchermController {
 
     public void updateUserstoryWithChat() {
         System.out.println("😅Test😅");
-        // Stap 1: Ophalen van geselecteerde user story
+        // Step 1: Get the selected user story
         UserstoryList selectedUserstory = userstoryListListView.getSelectionModel().getSelectedItem();
 
         if (selectedUserstory == null) {
@@ -132,24 +132,24 @@ public class UserstoryKiesSchermController {
 
         int selectedUserstoryId = selectedUserstory.getId();
 
-        // Stel dat je Chat_ID via UserSession meekrijgt, bijvoorbeeld:
-        int selectedChatId = UserSession.getSelectedChatId();  // Zorg dat deze bestaat
+        // Assuming Chat_ID is obtained from UserSession
+        int selectedChatId = UserSession.getSelectedChatId();  // Ensure this exists
 
-        // Stap 2: Database update uitvoeren
+        // Step 2: Perform the database insert into chat_userstory table
         DatabaseConnection connectionNow = new DatabaseConnection();
         Connection connectDB = connectionNow.getConnection();
 
-        String updateQuery = "UPDATE chat SET Userstory_ID = ? WHERE Chat_ID = ?";
+        String insertQuery = "INSERT INTO chat_userstory (Chat_ID, Userstory_ID) VALUES(?, ?)";
 
-        try (PreparedStatement preparedStatement = connectDB.prepareStatement(updateQuery)) {
-            preparedStatement.setInt(1, selectedUserstoryId);
-            preparedStatement.setInt(2, selectedChatId);
+        try (PreparedStatement preparedStatement = connectDB.prepareStatement(insertQuery)) {
+            preparedStatement.setInt(1, selectedChatId);
+            preparedStatement.setInt(2, selectedUserstoryId);
 
-            int rowsUpdated = preparedStatement.executeUpdate();
-            if (rowsUpdated > 0) {
-                System.out.println("😭Chatbericht succesvol gekoppeld aan userstory ID: " + selectedUserstoryId);
+            int rowsInserted = preparedStatement.executeUpdate();
+            if (rowsInserted > 0) {
+                System.out.println("😭 Chatbericht succesvol gekoppeld aan userstory ID: " + selectedUserstoryId);
             } else {
-                System.out.println("Geen chatbericht geüpdatet.");
+                System.out.println("Geen chatbericht toegevoegd.");
             }
 
         } catch (SQLException e) {
@@ -162,6 +162,7 @@ public class UserstoryKiesSchermController {
             }
         }
     }
+
 
     @FXML
     public void transferToChat(ActionEvent event){
