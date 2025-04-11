@@ -51,20 +51,22 @@ public class InlogController {
 
             // Vergelijk de hashes
             if (enteredPasswordHash.equals(storedPasswordHash)) {
+
                 statusLabel.setText("Inloggen gelukt!");
 
                 // Haal extra informatie op, zoals gebruiker ID en email
                 try (Connection connectDB = databaseConnection.getConnection()) {
-                    String query = "SELECT Gebruiker_ID FROM gebruiker WHERE naam = ?";
+                    String query = "SELECT Gebruiker_ID, Team_ID FROM gebruiker WHERE naam = ?";
                     PreparedStatement preparedStatement = connectDB.prepareStatement(query);
                     preparedStatement.setString(1, gebruikersnaam);
                     ResultSet queryResult = preparedStatement.executeQuery();
 
                     if (queryResult.next()) {
                         int id = queryResult.getInt("Gebruiker_ID");
+                        int teamID = queryResult.getInt("Team_ID");
 
                         // Start de gebruikerssessie
-                        UserSession.setSession(id, gebruikersnaam, null);
+                        UserSession.setSession(id, gebruikersnaam, teamID);
 
                         // Laad de nieuwe scene na inloggen
                         FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/Team.fxml"));
