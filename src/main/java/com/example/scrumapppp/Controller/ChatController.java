@@ -253,11 +253,9 @@ public class ChatController {
     private void connectChat(ActionEvent event){
         System.out.println("Chat😂 button clicked!");
         try {
-            System.out.println("Test😉");
             // Laad de registratie FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/ChatKiesScherm.fxml"));
             Scene userstoryScene = new Scene(loader.load());
-            System.out.println("Test 2😉");
 
 
             // Verkrijg de huidige stage

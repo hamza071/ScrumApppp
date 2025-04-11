@@ -73,7 +73,19 @@ public class UserSession {
         setSession = null;
     }
 
-//    Userstory, outside the user-id class
+//    Chat and Userstory, outside the user-id class
+//    Chat
+private static int selectedChatId = 0;
+
+    public static void setSelectedChatId(int chatId) {
+        selectedChatId = chatId;
+    }
+
+    public static int getSelectedChatId() {
+        return selectedChatId;
+    }
+
+//    Userstory
     public static void setSelectedUserstoryId(int id) {
         selectedUserstoryId = id;
         System.out.println("Selected Userstory ID set: " + id);

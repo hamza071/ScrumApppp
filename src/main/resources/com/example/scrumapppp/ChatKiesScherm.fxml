@@ -13,16 +13,20 @@
             fx:controller="com.example.scrumapppp.Controller.ChatKiesSchermController"
             prefHeight="1080.0" prefWidth="1920.0">
     <children>
-        <ListView fx:id="userstoryListListView" layoutX="98.0" layoutY="132.0" prefHeight="792.0" prefWidth="1724.0" />
+        <ListView fx:id="gebruikersListView" layoutX="98.0" layoutY="132.0" prefHeight="792.0" prefWidth="1724.0" />
         <Label fx:id="teamName" layoutX="51.0" prefHeight="41.0" prefWidth="215.0" text="[Team Naam]">
             <font>
                 <Font size="67.0" />
             </font>
         </Label>
-        <Button layoutX="1444.0" layoutY="956.0" mnemonicParsing="false" prefHeight="77.0" prefWidth="380.0" text="Userstory koppelen">
+        <Button layoutX="1444.0" layoutY="956.0" mnemonicParsing="false"
+                prefHeight="77.0" prefWidth="380.0"
+                text="Chat koppelen"
+                onAction="#connectUserstory">
             <font>
                 <Font size="36.0" />
             </font>
         </Button>
+
     </children>
 </AnchorPane>

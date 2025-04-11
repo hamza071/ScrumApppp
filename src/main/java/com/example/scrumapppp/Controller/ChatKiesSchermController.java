@@ -38,10 +38,12 @@ public class ChatKiesSchermController {
         // Selecting a message from the ListView
         gebruikersListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
-                selectedUser = newValue.toString();
-                System.out.println("Selected user: " + selectedUser);
+                int selectedChatId = newValue.getId(); // ← Hier zit je Chat_ID al in!
+                UserSession.setSelectedChatId(selectedChatId); // Sla hem op
+                System.out.println("Geselecteerde Chat_ID: " + selectedChatId);
             }
         });
+
     }
 
 
@@ -122,11 +124,9 @@ public class ChatKiesSchermController {
     private void connectUserstory(ActionEvent event){
         System.out.println("Userstory button clicked!");
         try {
-            System.out.println("Test😉");
             // Laad de registratie FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/UserstoryKiesScherm.fxml"));
             Scene userstoryScene = new Scene(loader.load());
-            System.out.println("Test 2😉");
 
 
             // Verkrijg de huidige stage

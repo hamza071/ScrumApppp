@@ -6,10 +6,15 @@ import com.example.scrumapppp.Session.UserSession;
 import com.example.scrumapppp.DatabaseAndSQL.DatabaseConnection;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.ListView;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -30,6 +35,8 @@ public class UserstoryKiesSchermController {
     public void initialize() {
         showTeamName();
         loadUserstories();  // Load user stories into the ListView
+
+        System.out.println("Chat gekoppeld met ID😭: " + UserSession.getSelectedChatId());
 
         // Selecting a user story from the ListView
         userstoryListListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -113,8 +120,8 @@ public class UserstoryKiesSchermController {
         }
     }
 
-    @FXML
     public void updateUserstoryWithChat() {
+        System.out.println("😅Test😅");
         // Stap 1: Ophalen van geselecteerde user story
         UserstoryList selectedUserstory = userstoryListListView.getSelectionModel().getSelectedItem();
 
@@ -126,7 +133,7 @@ public class UserstoryKiesSchermController {
         int selectedUserstoryId = selectedUserstory.getId();
 
         // Stel dat je Chat_ID via UserSession meekrijgt, bijvoorbeeld:
-        int selectedChatId = UserSession.getSelectedUserstoryId();  // Zorg dat deze bestaat
+        int selectedChatId = UserSession.getSelectedChatId();  // Zorg dat deze bestaat
 
         // Stap 2: Database update uitvoeren
         DatabaseConnection connectionNow = new DatabaseConnection();
@@ -140,7 +147,7 @@ public class UserstoryKiesSchermController {
 
             int rowsUpdated = preparedStatement.executeUpdate();
             if (rowsUpdated > 0) {
-                System.out.println("Chatbericht succesvol gekoppeld aan userstory ID: " + selectedUserstoryId);
+                System.out.println("😭Chatbericht succesvol gekoppeld aan userstory ID: " + selectedUserstoryId);
             } else {
                 System.out.println("Geen chatbericht geüpdatet.");
             }
@@ -153,6 +160,30 @@ public class UserstoryKiesSchermController {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    @FXML
+    public void transferToChat(ActionEvent event){
+        System.out.println("Userstory button clicked!");
+        updateUserstoryWithChat();
+        try {
+            // Laad de registratie FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/Chat.fxml"));
+            Scene userstoryScene = new Scene(loader.load());
+
+
+            // Verkrijg de huidige stage
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+
+            // Zet de nieuwe scene
+            stage.setScene(userstoryScene);
+
+            // Zet fullscreen AAN
+            stage.setFullScreen(true);
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
