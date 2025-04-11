@@ -28,4 +28,13 @@ public class Userstory {
     public String getBeschrijving() {
         return beschrijving;
     }
+
+    // Nieuw toegevoegd
+    public void setTitel(String titel) {
+        this.titel = titel;
+    }
+
+    public void setBeschrijving(String beschrijving) {
+        this.beschrijving = beschrijving;
+    }
 }

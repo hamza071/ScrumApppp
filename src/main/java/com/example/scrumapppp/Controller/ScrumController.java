@@ -1,21 +1,18 @@
 package com.example.scrumapppp.Controller;
 
-import com.example.scrumapppp.DatabaseAndSQL.Lijst;
-import com.example.scrumapppp.DatabaseAndSQL.LijstDAO;
-import com.example.scrumapppp.DatabaseAndSQL.Userstory;
-import com.example.scrumapppp.DatabaseAndSQL.UserstoryDAO;
+import com.example.scrumapppp.DatabaseAndSQL.*;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.Priority;
 
-import java.io.IOException;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -26,16 +23,17 @@ public class ScrumController {
 
     private LijstDAO lijstDAO;
     private UserstoryDAO userstoryDAO;
+    private TaakDAO taakDAO;
     private int teamId = 1; // tijdelijk hardcoded
 
     @FXML
     private void initialize() {
         lijstDAO = new LijstDAO();
         userstoryDAO = new UserstoryDAO();
+        taakDAO = new TaakDAO();
 
         laadBoard();
 
-        // Voeg knop toe om nieuwe lijst te maken
         Button voegLijstToeKnop = new Button("+ Voeg een lijst toe");
         voegLijstToeKnop.setOnAction(e -> maakNieuweLijst());
         boardHBox.getChildren().add(voegLijstToeKnop);
@@ -76,7 +74,6 @@ public class ScrumController {
 
         VBox userStoriesBox = new VBox(5);
 
-        // 👉 Maak deze lijst dropbaar
         userStoriesBox.setOnDragOver(event -> {
             if (event.getGestureSource() != userStoriesBox && event.getDragboard().hasString()) {
                 event.acceptTransferModes(TransferMode.MOVE);
@@ -89,20 +86,14 @@ public class ScrumController {
             boolean success = false;
             if (db.hasString()) {
                 int userstoryId = Integer.parseInt(db.getString());
-
-                // Update de userstory naar de nieuwe lijst
                 userstoryDAO.updateUserstoryLijst(userstoryId, lijst.getLijstId());
-
-                // Refresh het board zodat alles goed staat
                 laadBoard();
-
                 success = true;
             }
             event.setDropCompleted(success);
             event.consume();
         });
 
-        // Haal userstories op
         List<Userstory> userstories = userstoryDAO.getUserstoriesByLijstId(lijst.getLijstId());
         for (Userstory userstory : userstories) {
             voegUserstoryToeAanBox(userStoriesBox, userstory);
@@ -134,12 +125,8 @@ public class ScrumController {
         Button userStoryKnop = new Button(userstory.getTitel());
         userStoryKnop.setMaxWidth(Double.MAX_VALUE);
 
-        userStoryKnop.setOnAction(e -> {
-            System.out.println("Geklikt op userstory: " + userstory.getTitel());
-            // hier kan popup voor beschrijving komen
-        });
+        userStoryKnop.setOnAction(e -> openUserstoryTakenPopup(userstory));
 
-        // 👉 Maak userstory sleebaar
         userStoryKnop.setOnDragDetected(event -> {
             Dragboard db = userStoryKnop.startDragAndDrop(TransferMode.MOVE);
             ClipboardContent content = new ClipboardContent();
@@ -149,5 +136,105 @@ public class ScrumController {
         });
 
         userStoriesBox.getChildren().add(userStoryKnop);
+    }
+
+    private void openUserstoryTakenPopup(Userstory userstory) {
+        Stage popupStage = new Stage();
+        popupStage.setTitle("User Story: " + userstory.getTitel());
+
+        VBox layout = new VBox(10);
+        layout.setStyle("-fx-padding: 20;");
+
+        // Beschrijving
+        Label beschrijvingLabel = new Label("Beschrijving:");
+        TextArea beschrijvingArea = new TextArea(userstory.getBeschrijving());
+        beschrijvingArea.setWrapText(true);
+
+        Button opslaanBtn = new Button("Opslaan Beschrijving");
+        opslaanBtn.setOnAction(event -> {
+            String nieuweBeschrijving = beschrijvingArea.getText();
+            userstory.setBeschrijving(nieuweBeschrijving);
+            userstoryDAO.updateUserstoryBeschrijving(userstory.getUserstoryId(), nieuweBeschrijving);
+        });
+
+        // Taken
+        Label takenLabel = new Label("Taken:");
+        VBox takenBox = new VBox(5);
+
+        List<Taak> taken = taakDAO.getTakenByUserstoryId(userstory.getUserstoryId());
+        for (Taak taak : taken) {
+            HBox taakItem = maakTaakItem(taak, takenBox);
+            takenBox.getChildren().add(taakItem);
+        }
+
+        Button voegTaakToeBtn = new Button("+ Voeg Taak Toe");
+        voegTaakToeBtn.setOnAction(event -> {
+            TextInputDialog taakDialog = new TextInputDialog();
+            taakDialog.setTitle("Nieuwe Taak");
+            taakDialog.setHeaderText(null);
+            taakDialog.setContentText("Geef een titel voor de taak:");
+
+            Optional<String> taakResultaat = taakDialog.showAndWait();
+            taakResultaat.ifPresent(taakTitel -> {
+                Taak nieuweTaak = taakDAO.createTaak(userstory.getUserstoryId(), taakTitel);
+                if (nieuweTaak != null) {
+                    HBox nieuweTaakItem = maakTaakItem(nieuweTaak, takenBox);
+                    takenBox.getChildren().add(nieuweTaakItem);
+                }
+            });
+        });
+
+        // Spacer om delete knop naar beneden te drukken
+        Region spacer = new Region();
+        VBox.setVgrow(spacer, Priority.ALWAYS);
+
+        // Verwijder Userstory knop (rechtsonder)
+        Button verwijderUserstoryBtn = new Button("❌ Verwijder User Story");
+        verwijderUserstoryBtn.setStyle("-fx-background-color: red; -fx-text-fill: white;");
+        verwijderUserstoryBtn.setOnAction(event -> {
+            userstoryDAO.deleteUserstory(userstory.getUserstoryId());
+            popupStage.close();
+            laadBoard(); // Refresh board
+        });
+
+        HBox deleteBox = new HBox();
+        deleteBox.setStyle("-fx-alignment: bottom-right;");
+        deleteBox.getChildren().add(verwijderUserstoryBtn);
+
+        layout.getChildren().addAll(
+                beschrijvingLabel,
+                beschrijvingArea,
+                opslaanBtn,
+                takenLabel,
+                takenBox,
+                voegTaakToeBtn,
+                spacer,          // duwt alles omhoog
+                deleteBox        // delete knop rechts onder
+        );
+
+        Scene scene = new Scene(layout, 400, 600);
+        popupStage.setScene(scene);
+        popupStage.show();
+    }
+
+    private HBox maakTaakItem(Taak taak, VBox takenBox) {
+        CheckBox taakCheckBox = new CheckBox(taak.getTitel());
+        taakCheckBox.setSelected(taak.isDone());
+        taakCheckBox.setOnAction(e -> taakDAO.updateTaakStatus(taak.getTaakId(), taakCheckBox.isSelected()));
+
+        Button deleteTaakBtn = new Button("🗑️");
+        deleteTaakBtn.setOnAction(e -> {
+            taakDAO.deleteTaak(taak.getTaakId());
+            takenBox.getChildren().removeIf(node -> node == deleteTaakBtn.getParent());
+        });
+
+        // Maak een lege spacer tussen checkbox en delete knop
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        HBox taakItem = new HBox(5, taakCheckBox, spacer, deleteTaakBtn);
+        taakItem.setFillHeight(true); // zorgt dat alles netjes gecentreerd blijft
+
+        return taakItem;
     }
 }

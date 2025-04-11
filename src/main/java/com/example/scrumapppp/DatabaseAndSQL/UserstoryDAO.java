@@ -57,7 +57,7 @@ public class UserstoryDAO {
         return null;
     }
 
-    // ⭐ Nieuw toegevoegd voor slepen en verplaatsen
+    // ⭐ Voor slepen/verplaatsen naar een andere lijst
     public void updateUserstoryLijst(int userstoryId, int nieuweLijstId) {
         String sql = "UPDATE userstory SET Lijst_ID = ? WHERE Userstory_ID = ?";
 
@@ -68,6 +68,30 @@ public class UserstoryDAO {
             stmt.setInt(2, userstoryId);
             stmt.executeUpdate();
 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateUserstoryBeschrijving(int userstoryId, String nieuweBeschrijving) {
+        String sql = "UPDATE userstory SET beschrijving = ? WHERE Userstory_ID = ?";
+
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, nieuweBeschrijving);
+            stmt.setInt(2, userstoryId);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteUserstory(int userstoryId) {
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(
+                     "DELETE FROM userstory WHERE Userstory_ID = ?")) {
+            stmt.setInt(1, userstoryId);
+            stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
