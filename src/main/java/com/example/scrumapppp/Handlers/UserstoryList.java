@@ -17,7 +17,7 @@ public class UserstoryList {
 
     @Override
     public String toString(){
-        return displayText + " | " + displayText;
+        return id + " | " + displayText;
     }
 
 

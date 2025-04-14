@@ -142,4 +142,27 @@ public class ChatKiesSchermController {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    private void connectTaak(ActionEvent event){
+        System.out.println("Taak button clicked!");
+        try {
+            // Laad de registratie FXML
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/TaakKiesScherm.fxml"));
+            Scene userstoryScene = new Scene(loader.load());
+
+
+            // Verkrijg de huidige stage
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+
+            // Zet de nieuwe scene
+            stage.setScene(userstoryScene);
+
+            // Zet fullscreen AAN
+            stage.setFullScreen(true);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
