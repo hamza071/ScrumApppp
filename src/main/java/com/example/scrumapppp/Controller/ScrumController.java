@@ -4,13 +4,11 @@ import com.example.scrumapppp.DatabaseAndSQL.*;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -20,14 +18,13 @@ import java.util.Optional;
 public class ScrumController {
 
     @FXML
-    private HBox boardHBox;
+    private VBox mainLayout; // Zorg dat dit in je FXML staat als hoofdcontainer
 
+    private HBox boardHBox;
     private LijstDAO lijstDAO;
     private UserstoryDAO userstoryDAO;
     private TaakDAO taakDAO;
-    private int teamId = 1; // tijdelijk hardcoded
-
-    private Button voegLijstToeKnop; // 👈 maak het een field
+    private int teamId = 1; // hardcoded, kun je later koppelen aan login
 
     @FXML
     private void initialize() {
@@ -35,28 +32,49 @@ public class ScrumController {
         userstoryDAO = new UserstoryDAO();
         taakDAO = new TaakDAO();
 
-        voegLijstToeKnop = new Button("+ Voeg een lijst toe");
-        voegLijstToeKnop.setOnAction(e -> maakNieuweLijst());
+        boardHBox = new HBox(10);
+        boardHBox.setStyle("-fx-padding: 15;");
 
+        HBox topBar = maakTopBar(); // 👈 hier maken we de top bar
         laadBoard();
 
-        Timeline timeline = new Timeline(
-                new KeyFrame(Duration.seconds(5), e -> laadBoard())
-        );
+        // Voeg de componenten toe aan de main layout
+        mainLayout.getChildren().clear();
+        mainLayout.getChildren().addAll(topBar, boardHBox);
+
+        // Auto-refresh elke 5 seconden
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5), e -> laadBoard()));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
+    }
+
+    private HBox maakTopBar() {
+        HBox topBar = new HBox(10);
+        topBar.setStyle("-fx-padding: 10; -fx-background-color: #e0e0e0; -fx-border-color: #cccccc;");
+        topBar.setAlignment(Pos.CENTER_LEFT);
+
+        Button voegLijstToeBtn = new Button("+ Voeg lijst toe");
+        voegLijstToeBtn.setOnAction(e -> maakNieuweLijst());
+
+        Button chatBtn = new Button("Chat");
+        chatBtn.setOnAction(e -> openChatVenster()); // 👈 later invullen
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        Label teamLabel = new Label("Team ID: " + teamId);
+        teamLabel.setStyle("-fx-font-weight: bold;");
+
+        topBar.getChildren().addAll(voegLijstToeBtn, chatBtn, spacer, teamLabel);
+        return topBar;
     }
 
     private void laadBoard() {
         boardHBox.getChildren().clear();
         List<Lijst> lijsten = lijstDAO.getLijstenByTeamId(teamId);
-
         for (Lijst lijst : lijsten) {
-            VBox lijstBox = maakLijst(lijst);
-            boardHBox.getChildren().add(lijstBox);
+            boardHBox.getChildren().add(maakLijst(lijst));
         }
-
-        boardHBox.getChildren().add(voegLijstToeKnop); // Voeg knop steeds opnieuw toe
     }
 
     private void maakNieuweLijst() {
@@ -65,54 +83,49 @@ public class ScrumController {
         dialog.setHeaderText(null);
         dialog.setContentText("Geef een naam voor de nieuwe lijst:");
 
-        Optional<String> resultaat = dialog.showAndWait();
-        resultaat.ifPresent(naam -> {
+        dialog.showAndWait().ifPresent(naam -> {
             Lijst nieuweLijst = lijstDAO.createLijst(teamId, naam);
-            if (nieuweLijst != null) {
-                laadBoard(); // Laad alles opnieuw zodat de nieuwe lijst erbij staat
-            }
+            if (nieuweLijst != null) laadBoard();
         });
     }
 
     private VBox maakLijst(Lijst lijst) {
         VBox lijstBox = new VBox(10);
         lijstBox.setPrefWidth(250);
-        lijstBox.setStyle("-fx-background-color: #f0f0f0; -fx-padding: 10; -fx-border-color: #cccccc;");
+        lijstBox.setStyle("-fx-background-color: #f9f9f9; -fx-padding: 10; -fx-border-color: #ccc;");
 
         Label titelLabel = new Label(lijst.getNaam());
         titelLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
         VBox userStoriesBox = new VBox(5);
 
-        userStoriesBox.setOnDragOver(event -> {
-            if (event.getGestureSource() != userStoriesBox && event.getDragboard().hasString()) {
-                event.acceptTransferModes(TransferMode.MOVE);
+        userStoriesBox.setOnDragOver(e -> {
+            if (e.getGestureSource() != userStoriesBox && e.getDragboard().hasString()) {
+                e.acceptTransferModes(TransferMode.MOVE);
             }
-            event.consume();
+            e.consume();
         });
 
-        userStoriesBox.setOnDragDropped(event -> {
-            Dragboard db = event.getDragboard();
-            boolean success = false;
+        userStoriesBox.setOnDragDropped(e -> {
+            Dragboard db = e.getDragboard();
             if (db.hasString()) {
-                int userstoryId = Integer.parseInt(db.getString());
-                userstoryDAO.updateUserstoryLijst(userstoryId, lijst.getLijstId());
+                userstoryDAO.updateUserstoryLijst(Integer.parseInt(db.getString()), lijst.getLijstId());
                 laadBoard();
-                success = true;
+                e.setDropCompleted(true);
+            } else {
+                e.setDropCompleted(false);
             }
-            event.setDropCompleted(success);
-            event.consume();
+            e.consume();
         });
 
-        List<Userstory> userstories = userstoryDAO.getUserstoriesByLijstId(lijst.getLijstId());
-        for (Userstory userstory : userstories) {
+        for (Userstory userstory : userstoryDAO.getUserstoriesByLijstId(lijst.getLijstId())) {
             voegUserstoryToeAanBox(userStoriesBox, userstory);
         }
 
-        Button voegKaartToeKnop = new Button("+ Voeg een kaart toe");
-        voegKaartToeKnop.setOnAction(e -> maakNieuweUserStory(lijst, userStoriesBox));
+        Button kaartToeBtn = new Button("+ Voeg kaart toe");
+        kaartToeBtn.setOnAction(e -> maakNieuweUserStory(lijst, userStoriesBox));
 
-        lijstBox.getChildren().addAll(titelLabel, userStoriesBox, voegKaartToeKnop);
+        lijstBox.getChildren().addAll(titelLabel, userStoriesBox, kaartToeBtn);
         return lijstBox;
     }
 
@@ -122,117 +135,107 @@ public class ScrumController {
         dialog.setHeaderText(null);
         dialog.setContentText("Geef een titel voor de user story:");
 
-        Optional<String> resultaat = dialog.showAndWait();
-        resultaat.ifPresent(titel -> {
-            Userstory nieuweUserstory = userstoryDAO.createUserstory(lijst.getLijstId(), titel, "");
-            if (nieuweUserstory != null) {
-                laadBoard(); // Update hele board zodat anderen het ook zien
-            }
+        dialog.showAndWait().ifPresent(titel -> {
+            Userstory nieuwe = userstoryDAO.createUserstory(lijst.getLijstId(), titel, "");
+            if (nieuwe != null) laadBoard();
         });
     }
 
-    private void voegUserstoryToeAanBox(VBox userStoriesBox, Userstory userstory) {
-        Button userStoryKnop = new Button(userstory.getTitel());
-        userStoryKnop.setMaxWidth(Double.MAX_VALUE);
-
-        userStoryKnop.setOnAction(e -> openUserstoryTakenPopup(userstory));
-
-        userStoryKnop.setOnDragDetected(event -> {
-            Dragboard db = userStoryKnop.startDragAndDrop(TransferMode.MOVE);
+    private void voegUserstoryToeAanBox(VBox box, Userstory userstory) {
+        Button knop = new Button(userstory.getTitel());
+        knop.setMaxWidth(Double.MAX_VALUE);
+        knop.setOnAction(e -> openUserstoryTakenPopup(userstory));
+        knop.setOnDragDetected(e -> {
+            Dragboard db = knop.startDragAndDrop(TransferMode.MOVE);
             ClipboardContent content = new ClipboardContent();
             content.putString(String.valueOf(userstory.getUserstoryId()));
             db.setContent(content);
-            event.consume();
+            e.consume();
         });
-
-        userStoriesBox.getChildren().add(userStoryKnop);
+        box.getChildren().add(knop);
     }
 
     private void openUserstoryTakenPopup(Userstory userstory) {
-        Stage popupStage = new Stage();
-        popupStage.setTitle("User Story: " + userstory.getTitel());
+        Stage popup = new Stage();
+        popup.setTitle("User Story: " + userstory.getTitel());
 
         VBox layout = new VBox(10);
         layout.setStyle("-fx-padding: 20;");
 
-        Label beschrijvingLabel = new Label("Beschrijving:");
         TextArea beschrijvingArea = new TextArea(userstory.getBeschrijving());
         beschrijvingArea.setWrapText(true);
 
-        Button opslaanBtn = new Button("Opslaan Beschrijving");
-        opslaanBtn.setOnAction(event -> {
-            String nieuweBeschrijving = beschrijvingArea.getText();
-            userstory.setBeschrijving(nieuweBeschrijving);
-            userstoryDAO.updateUserstoryBeschrijving(userstory.getUserstoryId(), nieuweBeschrijving);
+        Button opslaan = new Button("Opslaan Beschrijving");
+        opslaan.setOnAction(e -> {
+            userstory.setBeschrijving(beschrijvingArea.getText());
+            userstoryDAO.updateUserstoryBeschrijving(userstory.getUserstoryId(), beschrijvingArea.getText());
         });
 
-        Label takenLabel = new Label("Taken:");
         VBox takenBox = new VBox(5);
-
-        List<Taak> taken = taakDAO.getTakenByUserstoryId(userstory.getUserstoryId());
-        for (Taak taak : taken) {
-            HBox taakItem = maakTaakItem(taak, takenBox);
-            takenBox.getChildren().add(taakItem);
+        for (Taak taak : taakDAO.getTakenByUserstoryId(userstory.getUserstoryId())) {
+            takenBox.getChildren().add(maakTaakItem(taak, takenBox));
         }
 
-        Button voegTaakToeBtn = new Button("+ Voeg Taak Toe");
-        voegTaakToeBtn.setOnAction(event -> {
-            TextInputDialog taakDialog = new TextInputDialog();
-            taakDialog.setTitle("Nieuwe Taak");
-            taakDialog.setHeaderText(null);
-            taakDialog.setContentText("Geef een titel voor de taak:");
-            Optional<String> taakResultaat = taakDialog.showAndWait();
-            taakResultaat.ifPresent(taakTitel -> {
-                Taak nieuweTaak = taakDAO.createTaak(userstory.getUserstoryId(), taakTitel);
-                if (nieuweTaak != null) {
-                    HBox nieuweTaakItem = maakTaakItem(nieuweTaak, takenBox);
-                    takenBox.getChildren().add(nieuweTaakItem);
-                }
+        Button taakToevoegen = new Button("+ Voeg Taak Toe");
+        taakToevoegen.setOnAction(e -> {
+            TextInputDialog taakDialoog = new TextInputDialog();
+            taakDialoog.setTitle("Nieuwe Taak");
+            taakDialoog.setContentText("Geef een titel voor de taak:");
+            taakDialoog.showAndWait().ifPresent(titel -> {
+                Taak t = taakDAO.createTaak(userstory.getUserstoryId(), titel);
+                if (t != null) takenBox.getChildren().add(maakTaakItem(t, takenBox));
             });
         });
 
         Region spacer = new Region();
         VBox.setVgrow(spacer, Priority.ALWAYS);
 
-        Button verwijderUserstoryBtn = new Button("❌ Verwijder User Story");
-        verwijderUserstoryBtn.setStyle("-fx-background-color: red; -fx-text-fill: white;");
-        verwijderUserstoryBtn.setOnAction(event -> {
+        Button verwijderen = new Button("❌ Verwijder User Story");
+        verwijderen.setStyle("-fx-background-color: red; -fx-text-fill: white;");
+        verwijderen.setOnAction(e -> {
             userstoryDAO.deleteUserstory(userstory.getUserstoryId());
-            popupStage.close();
+            popup.close();
             laadBoard();
         });
 
-        HBox deleteBox = new HBox();
-        deleteBox.setStyle("-fx-alignment: bottom-right;");
-        deleteBox.getChildren().add(verwijderUserstoryBtn);
+        HBox deleteBox = new HBox(verwijderen);
+        deleteBox.setAlignment(Pos.BOTTOM_RIGHT);
 
         layout.getChildren().addAll(
-                beschrijvingLabel, beschrijvingArea, opslaanBtn,
-                takenLabel, takenBox, voegTaakToeBtn,
+                new Label("Beschrijving:"), beschrijvingArea, opslaan,
+                new Label("Taken:"), takenBox, taakToevoegen,
                 spacer, deleteBox
         );
 
-        Scene scene = new Scene(layout, 400, 600);
-        popupStage.setScene(scene);
-        popupStage.show();
+        popup.setScene(new Scene(layout, 400, 600));
+        popup.show();
     }
 
     private HBox maakTaakItem(Taak taak, VBox takenBox) {
-        CheckBox taakCheckBox = new CheckBox(taak.getTitel());
-        taakCheckBox.setSelected(taak.isDone());
-        taakCheckBox.setOnAction(e -> taakDAO.updateTaakStatus(taak.getTaakId(), taakCheckBox.isSelected()));
+        CheckBox checkbox = new CheckBox(taak.getTitel());
+        checkbox.setSelected(taak.isDone());
+        checkbox.setOnAction(e -> taakDAO.updateTaakStatus(taak.getTaakId(), checkbox.isSelected()));
 
-        Button deleteTaakBtn = new Button("🗑️");
-        deleteTaakBtn.setOnAction(e -> {
+        Button deleteBtn = new Button("🗑️");
+        deleteBtn.setOnAction(e -> {
             taakDAO.deleteTaak(taak.getTaakId());
-            takenBox.getChildren().removeIf(node -> node == deleteTaakBtn.getParent());
+            takenBox.getChildren().removeIf(n -> n == deleteBtn.getParent());
         });
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        HBox taakItem = new HBox(5, taakCheckBox, spacer, deleteTaakBtn);
+        HBox taakItem = new HBox(5, checkbox, spacer, deleteBtn);
         taakItem.setFillHeight(true);
         return taakItem;
+    }
+
+    // 👇 Placeholder voor de chatfunctie
+    private void openChatVenster() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Chat");
+        alert.setHeaderText("Chatfunctie nog niet geïmplementeerd");
+        alert.setContentText("Hier komt later een chatvenster.");
+        alert.showAndWait();
     }
 }
