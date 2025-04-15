@@ -8,21 +8,6 @@ import javafx.scene.input.MouseEvent;  // Voeg MouseEvent toe
 
 public class TeamController {
 
-    // Deze methode wordt aangeroepen wanneer de chat-knop wordt geklikt
-    @FXML
-    private void chatButtonClick(ActionEvent event) {
-        System.out.println("Chat button clicked!");
-        // Voeg hier de gewenste functionaliteit toe voor de chatknop
-        showAlert("Chatfunctie", "De chatfunctie wordt binnenkort toegevoegd!", AlertType.INFORMATION);
-    }
-
-    // Deze methode kan voor de uitlogknop zijn
-    @FXML
-    private void logOutButtonClick(ActionEvent event) {
-        System.out.println("Uitloggen clicked!");
-        // Voeg hier de uitloglogica toe
-    }
-
     // Deze methode wordt aangeroepen wanneer de create-knop wordt geklikt
     @FXML
     private void handleCreateButtonClick(ActionEvent event) {
@@ -38,5 +23,20 @@ public class TeamController {
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    // Deze methode kan voor de chat-knop zijn
+    @FXML
+    private void chatButtonClick(ActionEvent event) {
+        System.out.println("Chat button clicked!");
+        // Voeg hier de gewenste functionaliteit toe voor de chatknop
+        showAlert("Chatfunctie", "De chatfunctie wordt binnenkort toegevoegd!", AlertType.INFORMATION);
+    }
+
+    // Deze methode kan voor de uitlogknop zijn
+    @FXML
+    private void logOutButtonClick(ActionEvent event) {
+        System.out.println("Uitloggen clicked!");
+        // Voeg hier de uitloglogica toe
     }
 }
