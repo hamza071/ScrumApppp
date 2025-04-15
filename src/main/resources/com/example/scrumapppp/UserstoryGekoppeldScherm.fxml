@@ -1,34 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.example.scrumapppp.Controller.UserstoryGekoppeldSchermController"
-            prefHeight="400.0" prefWidth="600.0">
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.scrumapppp.Controller.UserstoryGekoppeldSchermController">
     <children>
-        <ListView fx:id="userstoryListListView" layoutX="98.0" layoutY="132.0" prefHeight="792.0" prefWidth="1724.0" />
-        <Text fx:id="teamName" layoutX="105.0" layoutY="91.0" strokeType="OUTSIDE" strokeWidth="0.0" text="[Team naam]">
+        <ListView fx:id="userstoryListListView" layoutX="98.0" layoutY="132.0" prefHeight="792.0" prefWidth="726.0" />
+        <Text fx:id="teamName" layoutX="105.0" layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0" text="[Team naam]" wrappingWidth="726.0">
             <font>
                 <Font size="67.0" />
             </font>
         </Text>
-        <Button fx:id="updateUserstoryWithChat"
-                layoutX="1444.0" layoutY="956.0"
-                mnemonicParsing="false"
-                prefHeight="77.0" prefWidth="380.0"
-                text="Userstory koppelen"
-                onAction="#transferToChat">
+        <Button fx:id="updateUserstoryWithChat" layoutX="1282.0" layoutY="920.0" mnemonicParsing="false" onAction="#transferToChat" prefHeight="77.0" prefWidth="342.0" text="Terug naar chat">
             <font>
                 <Font size="36.0" />
             </font>
         </Button>
+      <ListView fx:id="loadUserstories" layoutX="920.0" layoutY="128.0" prefHeight="792.0" prefWidth="726.0" />
+      <Text layoutX="920.0" layoutY="125.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Userstory" wrappingWidth="105.951171875">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Text>
+      <Text layoutX="98.0" layoutY="121.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Chats" wrappingWidth="105.951171875">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Text>
 
     </children>
 </AnchorPane>
