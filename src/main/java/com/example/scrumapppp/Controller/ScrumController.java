@@ -18,13 +18,13 @@ import java.util.Optional;
 public class ScrumController {
 
     @FXML
-    private VBox mainLayout; // Zorg dat dit in je FXML staat als hoofdcontainer
+    private VBox mainLayout;
 
     private HBox boardHBox;
     private LijstDAO lijstDAO;
     private UserstoryDAO userstoryDAO;
     private TaakDAO taakDAO;
-    private int teamId = 1; // hardcoded, kun je later koppelen aan login
+    private int teamId = 1;  // Default teamId, kan later via de TeamController worden doorgegeven
 
     @FXML
     private void initialize() {
@@ -35,14 +35,13 @@ public class ScrumController {
         boardHBox = new HBox(10);
         boardHBox.setStyle("-fx-padding: 15;");
 
-        HBox topBar = maakTopBar(); // 👈 hier maken we de top bar
+        HBox topBar = maakTopBar();
         laadBoard();
 
-        // Voeg de componenten toe aan de main layout
         mainLayout.getChildren().clear();
         mainLayout.getChildren().addAll(topBar, boardHBox);
 
-        // Auto-refresh elke 5 seconden
+        // Zorg ervoor dat het bord elke 5 seconden wordt vernieuwd
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5), e -> laadBoard()));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
@@ -57,7 +56,7 @@ public class ScrumController {
         voegLijstToeBtn.setOnAction(e -> maakNieuweLijst());
 
         Button chatBtn = new Button("Chat");
-        chatBtn.setOnAction(e -> openChatVenster()); // 👈 later invullen
+        chatBtn.setOnAction(e -> openChatVenster());
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -177,15 +176,7 @@ public class ScrumController {
         }
 
         Button taakToevoegen = new Button("+ Voeg Taak Toe");
-        taakToevoegen.setOnAction(e -> {
-            TextInputDialog taakDialoog = new TextInputDialog();
-            taakDialoog.setTitle("Nieuwe Taak");
-            taakDialoog.setContentText("Geef een titel voor de taak:");
-            taakDialoog.showAndWait().ifPresent(titel -> {
-                Taak t = taakDAO.createTaak(userstory.getUserstoryId(), titel);
-                if (t != null) takenBox.getChildren().add(maakTaakItem(t, takenBox));
-            });
-        });
+        taakToevoegen.setOnAction(e -> openNieuweTaakDialog(userstory));
 
         Region spacer = new Region();
         VBox.setVgrow(spacer, Priority.ALWAYS);
@@ -230,12 +221,45 @@ public class ScrumController {
         return taakItem;
     }
 
-    // 👇 Placeholder voor de chatfunctie
+    private void openNieuweTaakDialog(Userstory userstory) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Nieuwe Taak");
+        dialog.setHeaderText("Nieuwe taak toevoegen aan user story: " + userstory.getTitel());
+        dialog.setContentText("Voer een titel in voor de taak:");
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(titel -> {
+            if (titel.trim().isEmpty()) {
+                showAlert("Ongeldige invoer", "De titel mag niet leeg zijn.", Alert.AlertType.WARNING);
+            } else {
+                Taak nieuweTaak = taakDAO.createTaak(userstory.getUserstoryId(), titel.trim());
+                if (nieuweTaak != null) {
+                    laadBoard();
+                } else {
+                    showAlert("Fout bij opslaan", "De taak kon niet worden aangemaakt.", Alert.AlertType.ERROR);
+                }
+            }
+        });
+    }
+
+    private void showAlert(String titel, String boodschap, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setTitle(titel);
+        alert.setHeaderText(null);
+        alert.setContentText(boodschap);
+        alert.showAndWait();
+    }
+
     private void openChatVenster() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Chat");
         alert.setHeaderText("Chatfunctie nog niet geïmplementeerd");
         alert.setContentText("Hier komt later een chatvenster.");
         alert.showAndWait();
+    }
+
+    // Methode om teamId via setter in te stellen (gebruik deze om teamId van buitenaf door te geven)
+    public void setTeamId(int teamId) {
+        this.teamId = teamId;
     }
 }
