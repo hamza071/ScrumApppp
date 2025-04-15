@@ -7,7 +7,7 @@ import java.sql.SQLException;
 public class DatabaseConnection {
     private static final String DATABASE_NAME = "scrumapp";
     private static final String DATABASE_USER = "root";
-    private static final String DATABASE_PASSWORD = "SkiMaskDog"; // Zorg ervoor dat dit correct is
+    private static final String DATABASE_PASSWORD = "Weetikv33l;)"; // Zorg ervoor dat dit correct is
     private static final String URL = "jdbc:mysql://localhost:3306/" + DATABASE_NAME + "?useSSL=false&serverTimezone=UTC";
 
     private Connection databaseLink;
