@@ -18,16 +18,21 @@ import java.util.Optional;
 public class ScrumController {
 
     @FXML
-    private VBox mainLayout; // Zorg dat dit in je FXML staat als hoofdcontainer
+    private VBox mainLayout;
 
     private HBox boardHBox;
+    private ComboBox<Sprint> sprintComboBox;
+    private SprintDAO sprintDAO;
     private LijstDAO lijstDAO;
     private UserstoryDAO userstoryDAO;
     private TaakDAO taakDAO;
-    private int teamId = 1; // hardcoded, kun je later koppelen aan login
+
+    private int teamId = 1;
+    private Sprint geselecteerdeSprint;
 
     @FXML
     private void initialize() {
+        sprintDAO = new SprintDAO();
         lijstDAO = new LijstDAO();
         userstoryDAO = new UserstoryDAO();
         taakDAO = new TaakDAO();
@@ -35,29 +40,38 @@ public class ScrumController {
         boardHBox = new HBox(10);
         boardHBox.setStyle("-fx-padding: 15;");
 
-        HBox topBar = maakTopBar(); // 👈 hier maken we de top bar
-        laadBoard();
+        HBox topBar = maakTopBar();
 
-        // Voeg de componenten toe aan de main layout
+        laadSprints();
+
         mainLayout.getChildren().clear();
         mainLayout.getChildren().addAll(topBar, boardHBox);
 
-        // Auto-refresh elke 5 seconden
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5), e -> laadBoard()));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
     }
-
+ //Bing Chilling
     private HBox maakTopBar() {
         HBox topBar = new HBox(10);
         topBar.setStyle("-fx-padding: 10; -fx-background-color: #e0e0e0; -fx-border-color: #cccccc;");
         topBar.setAlignment(Pos.CENTER_LEFT);
 
-        Button voegLijstToeBtn = new Button("+ Voeg lijst toe");
-        voegLijstToeBtn.setOnAction(e -> maakNieuweLijst());
+        Button nieuweLijstBtn = new Button("+ Voeg lijst toe");
+        nieuweLijstBtn.setOnAction(e -> maakNieuweLijst());
+
+        Button nieuweSprintBtn = new Button("+ Nieuwe sprint");
+        nieuweSprintBtn.setOnAction(e -> maakNieuweSprint());
+
+        sprintComboBox = new ComboBox<>();
+        sprintComboBox.setPromptText("Selecteer sprint");
+        sprintComboBox.setOnAction(e -> {
+            geselecteerdeSprint = sprintComboBox.getValue();
+            laadBoard();
+        });
 
         Button chatBtn = new Button("Chat");
-        chatBtn.setOnAction(e -> openChatVenster()); // 👈 later invullen
+        chatBtn.setOnAction(e -> openChatVenster());
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -65,26 +79,62 @@ public class ScrumController {
         Label teamLabel = new Label("Team ID: " + teamId);
         teamLabel.setStyle("-fx-font-weight: bold;");
 
-        topBar.getChildren().addAll(voegLijstToeBtn, chatBtn, spacer, teamLabel);
+        topBar.getChildren().addAll(
+                nieuweLijstBtn,
+                nieuweSprintBtn,
+                sprintComboBox,
+                chatBtn,
+                spacer,
+                teamLabel
+        );
         return topBar;
+    }
+
+    private void laadSprints() {
+        List<Sprint> sprints = sprintDAO.getSprintsByTeamId(teamId);
+        sprintComboBox.getItems().setAll(sprints);
+        if (!sprints.isEmpty()) {
+            geselecteerdeSprint = sprints.get(0);
+            sprintComboBox.setValue(geselecteerdeSprint);
+            laadBoard();
+        }
+    }
+
+    private void maakNieuweSprint() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Nieuwe Sprint");
+        dialog.setHeaderText(null);
+        dialog.setContentText("Geef een naam voor de sprint:");
+
+        dialog.showAndWait().ifPresent(naam -> {
+            Sprint nieuwe = sprintDAO.createSprint(teamId, naam);
+            if (nieuwe != null) {
+                laadSprints();
+                sprintComboBox.setValue(nieuwe);
+            }
+        });
     }
 
     private void laadBoard() {
         boardHBox.getChildren().clear();
-        List<Lijst> lijsten = lijstDAO.getLijstenByTeamId(teamId);
+        if (geselecteerdeSprint == null) return;
+
+        List<Lijst> lijsten = lijstDAO.getLijstenBySprintId(geselecteerdeSprint.getSprintId());
         for (Lijst lijst : lijsten) {
             boardHBox.getChildren().add(maakLijst(lijst));
         }
     }
 
     private void maakNieuweLijst() {
+        if (geselecteerdeSprint == null) return;
+
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Nieuwe Lijst");
         dialog.setHeaderText(null);
         dialog.setContentText("Geef een naam voor de nieuwe lijst:");
 
         dialog.showAndWait().ifPresent(naam -> {
-            Lijst nieuweLijst = lijstDAO.createLijst(teamId, naam);
+            Lijst nieuweLijst = lijstDAO.createLijst(teamId, geselecteerdeSprint.getSprintId(), naam);
             if (nieuweLijst != null) laadBoard();
         });
     }
@@ -230,12 +280,7 @@ public class ScrumController {
         return taakItem;
     }
 
-    // 👇 Placeholder voor de chatfunctie
     private void openChatVenster() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Chat");
-        alert.setHeaderText("Chatfunctie nog niet geïmplementeerd");
-        alert.setContentText("Hier komt later een chatvenster.");
-        alert.showAndWait();
+
     }
 }
