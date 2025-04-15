@@ -6,21 +6,23 @@ public class UserSession {
 
     private int id;
     private String username;
-    private String email;// Add other fields as needed
+    private int teamID;// Add other fields as needed
+    // Add this in UserSession.java
+    private static int selectedUserstoryId;
 
 
-    private UserSession(int id, String username, String email)
+    private UserSession(int id, String username, int teamID)
     {
         this.id = id;
         this.username = username;
-        this.email = email;
+        this.teamID = teamID;
     }
 
     // Singleton instance getter
-    public static void setSession(int id, String username, String email) {
+    public static void setSession(int id, String username, int teamID) {
         if (setSession == null) {
-            setSession = new UserSession(id, username, email);
-            System.out.println("Session created: " + id + ", " + username + ", " + email);
+            setSession = new UserSession(id, username, teamID);
+            System.out.println("Session created: " + id + ", " + username +  ", " + teamID);
         } else if(UserSession.getSession() == null){
             System.out.println("User is not logged in!");
         } else{
@@ -42,18 +44,17 @@ public class UserSession {
     }
 
 
-    public static String getEmail() {
-        if (setSession != null) {
-            return setSession.email;  // Return the username from the current session
-        } else {
-            return "No user is logged in";  // Return a default message if no session is active
-        }
-    }
-
-
     public static int getID(){
         if (setSession != null) {
             return setSession.id;  // Return the username from the current session
+        } else {
+            return 0;  // Return a default message if no session is active
+        }
+    }
+
+    public static int getTeamID(){
+        if (setSession != null) {
+            return setSession.teamID;  // Return the username from the current session
         } else {
             return 0;  // Return a default message if no session is active
         }
@@ -63,7 +64,7 @@ public class UserSession {
         return "UserSession{" +
                 "id=" + setSession.id +
                 ", username='" + setSession.username + '\'' +
-                ", email='" + setSession.email + '\'' +
+                ", Team ID='" + setSession.teamID + '\'' +
                 '}';
     }
 
@@ -72,6 +73,17 @@ public class UserSession {
         setSession = null;
     }
 
+    //    Userstory, outside the user-id class
+    public static void setSelectedUserstoryId(int id) {
+        selectedUserstoryId = id;
+        System.out.println("Selected Userstory ID set: " + id);
+    }
+
+    public static int getSelectedUserstoryId() {
+        return selectedUserstoryId;
+    }
+
+
 
     // Optional: Add a toString method for debugging
     @Override
@@ -79,7 +91,7 @@ public class UserSession {
         return "UserSession{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
+                ", Team ID='" + teamID + '\'' +
                 '}';
     }
 }
