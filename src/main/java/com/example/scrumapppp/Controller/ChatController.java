@@ -133,6 +133,7 @@ public class ChatController {
         }
     }
 
+//   User able to chat
     public void showMessage() {
         int teamID = UserSession.getTeamID();
         ObservableList<ChatMessage> gebruikersList = FXCollections.observableArrayList();
