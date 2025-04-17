@@ -11,6 +11,9 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+
 
 import java.util.List;
 import java.util.Optional;
@@ -302,8 +305,19 @@ public class ScrumController {
     }
 
     private void openChatVenster() {
-        // Implementatie voor chatvenster kan hier komen
-        //iets
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/ChatsScherm.fxml"));
+            Parent root = loader.load();
+
+            // Huidig venster vervangen
+            Stage huidigeStage = (Stage) mainLayout.getScene().getWindow();
+            Scene nieuweScene = new Scene(root);
+            huidigeStage.setScene(nieuweScene);
+            huidigeStage.setTitle("Chat");
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Fout bij openen", "Het chatscherm kon niet worden geladen.", Alert.AlertType.ERROR);
+        }
     }
 
     public void setTeamId(int teamId) {

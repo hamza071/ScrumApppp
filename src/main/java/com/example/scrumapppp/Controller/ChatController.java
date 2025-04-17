@@ -1,10 +1,17 @@
 package com.example.scrumapppp.Controller;
 
 import com.example.scrumapppp.DatabaseAndSQL.*;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+import javafx.scene.Parent;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,6 +34,7 @@ public class ChatController {
     private final ChatGroepDAO chatGroepDAO = new ChatGroepDAO();
 
     private String huidigeGroep = null;
+    private Timeline autoRefreshTimer;
 
     @FXML
     public void initialize() {
@@ -43,9 +51,25 @@ public class ChatController {
         if (geselecteerdeGroep != null) {
             huidigeGroep = geselecteerdeGroep;
             groepTitelLabel.setText("Groep: " + huidigeGroep);
-            chatTextArea.clear();
+            startAutoRefresh();
+            laadChatVoorHuidigeGroep();
+        }
+    }
 
+    private void startAutoRefresh() {
+        if (autoRefreshTimer != null) {
+            autoRefreshTimer.stop();
+        }
+
+        autoRefreshTimer = new Timeline(new KeyFrame(Duration.seconds(3), e -> laadChatVoorHuidigeGroep()));
+        autoRefreshTimer.setCycleCount(Timeline.INDEFINITE);
+        autoRefreshTimer.play();
+    }
+
+    private void laadChatVoorHuidigeGroep() {
+        if (huidigeGroep != null) {
             List<ChatBericht> berichten = chatDAO.getBerichtenVoorGroep(huidigeGroep);
+            chatTextArea.clear();
             for (ChatBericht b : berichten) {
                 chatTextArea.appendText(b.getFormatted() + "\n");
             }
@@ -66,8 +90,8 @@ public class ChatController {
             );
 
             chatDAO.voegBerichtToe(nieuwBericht);
-            chatTextArea.appendText(nieuwBericht.getFormatted() + "\n");
             inputField.clear();
+            laadChatVoorHuidigeGroep(); // Direct tonen
         }
     }
 
@@ -136,5 +160,28 @@ public class ChatController {
         });
 
         dialog.showAndWait();
+    }
+
+    @FXML
+    private void gaTerugNaarBoard() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/ScrumScherm.fxml"));
+            Parent root = loader.load();
+
+            // Indien nodig kan hier teamId worden meegegeven aan ScrumController
+            // ScrumController controller = loader.getController();
+            // controller.setTeamId(teamId);
+
+            Stage huidigeStage = (Stage) groepListView.getScene().getWindow();
+            huidigeStage.setScene(new Scene(root));
+            huidigeStage.setTitle("Scrum Board");
+        } catch (Exception e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Fout");
+            alert.setHeaderText(null);
+            alert.setContentText("Kon niet terugkeren naar het board.");
+            alert.showAndWait();
+        }
     }
 }
