@@ -13,7 +13,6 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.util.List;
-import java.util.Optional;
 
 public class ScrumController {
 
@@ -24,7 +23,7 @@ public class ScrumController {
     private LijstDAO lijstDAO;
     private UserstoryDAO userstoryDAO;
     private TaakDAO taakDAO;
-    private int teamId = 1;  // Default teamId, kan later via de TeamController worden doorgegeven
+    private int teamId = 1; // Wordt overschreven door TeamController
 
     @FXML
     private void initialize() {
@@ -41,10 +40,13 @@ public class ScrumController {
         mainLayout.getChildren().clear();
         mainLayout.getChildren().addAll(topBar, boardHBox);
 
-        // Zorg ervoor dat het bord elke 5 seconden wordt vernieuwd
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5), e -> laadBoard()));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
+    }
+
+    public void setTeamId(int teamId) {
+        this.teamId = teamId;
     }
 
     private HBox maakTopBar() {
@@ -217,49 +219,26 @@ public class ScrumController {
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         HBox taakItem = new HBox(5, checkbox, spacer, deleteBtn);
-        taakItem.setFillHeight(true);
         return taakItem;
     }
 
     private void openNieuweTaakDialog(Userstory userstory) {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Nieuwe Taak");
-        dialog.setHeaderText("Nieuwe taak toevoegen aan user story: " + userstory.getTitel());
-        dialog.setContentText("Voer een titel in voor de taak:");
+        dialog.setHeaderText(null);
+        dialog.setContentText("Geef een titel voor de taak:");
 
-        Optional<String> result = dialog.showAndWait();
-        result.ifPresent(titel -> {
-            if (titel.trim().isEmpty()) {
-                showAlert("Ongeldige invoer", "De titel mag niet leeg zijn.", Alert.AlertType.WARNING);
-            } else {
-                Taak nieuweTaak = taakDAO.createTaak(userstory.getUserstoryId(), titel.trim());
-                if (nieuweTaak != null) {
-                    laadBoard();
-                } else {
-                    showAlert("Fout bij opslaan", "De taak kon niet worden aangemaakt.", Alert.AlertType.ERROR);
-                }
-            }
+        dialog.showAndWait().ifPresent(titel -> {
+            taakDAO.createTaak(userstory.getUserstoryId(), titel, false);
+            laadBoard();
         });
-    }
-
-    private void showAlert(String titel, String boodschap, Alert.AlertType type) {
-        Alert alert = new Alert(type);
-        alert.setTitle(titel);
-        alert.setHeaderText(null);
-        alert.setContentText(boodschap);
-        alert.showAndWait();
     }
 
     private void openChatVenster() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Chat");
-        alert.setHeaderText("Chatfunctie nog niet geïmplementeerd");
-        alert.setContentText("Hier komt later een chatvenster.");
+        alert.setHeaderText(null);
+        alert.setContentText("Chatfunctie komt binnenkort!");
         alert.showAndWait();
-    }
-
-    // Methode om teamId via setter in te stellen (gebruik deze om teamId van buitenaf door te geven)
-    public void setTeamId(int teamId) {
-        this.teamId = teamId;
     }
 }

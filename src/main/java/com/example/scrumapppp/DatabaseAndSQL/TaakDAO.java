@@ -30,19 +30,20 @@ public class TaakDAO {
         return taken;
     }
 
-    public Taak createTaak(int userstoryId, String titel) {
+    public Taak createTaak(int userstoryId, String titel, boolean isDone) {
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(
-                     "INSERT INTO taak (Userstory_ID, titel, is_done) VALUES (?, ?, 0)", Statement.RETURN_GENERATED_KEYS)) {
+                     "INSERT INTO taak (Userstory_ID, titel, is_done) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS)) {
             stmt.setInt(1, userstoryId);
             stmt.setString(2, titel);
+            stmt.setBoolean(3, isDone);
             int affectedRows = stmt.executeUpdate();
 
             if (affectedRows > 0) {
                 ResultSet generatedKeys = stmt.getGeneratedKeys();
                 if (generatedKeys.next()) {
                     int taakId = generatedKeys.getInt(1);
-                    return new Taak(taakId, userstoryId, titel, false);
+                    return new Taak(taakId, userstoryId, titel, isDone);
                 }
             }
         } catch (SQLException e) {
