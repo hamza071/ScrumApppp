@@ -4,7 +4,7 @@ public class Lijst {
     private int lijstId;
     private int teamId;
     private String naam;
-    private int sprintId; // ✅ toegevoegd
+    private int sprintId;
 
     public Lijst(int lijstId, int teamId, String naam, int sprintId) {
         this.lijstId = lijstId;
@@ -27,5 +27,10 @@ public class Lijst {
 
     public int getSprintId() {
         return sprintId;
+    }
+
+    @Override
+    public String toString() {
+        return naam;
     }
 }

@@ -18,4 +18,9 @@ public class Taak {
     public int getUserstoryId() { return userstoryId; }
     public String getTitel() { return titel; }
     public boolean isDone() { return isDone; }
+
+    @Override
+    public String toString() {
+        return titel;
+    }
 }

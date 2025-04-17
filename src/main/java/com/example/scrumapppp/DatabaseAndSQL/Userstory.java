@@ -29,12 +29,16 @@ public class Userstory {
         return beschrijving;
     }
 
-    // Nieuw toegevoegd
     public void setTitel(String titel) {
         this.titel = titel;
     }
 
     public void setBeschrijving(String beschrijving) {
         this.beschrijving = beschrijving;
+    }
+
+    @Override
+    public String toString() {
+        return titel;
     }
 }
