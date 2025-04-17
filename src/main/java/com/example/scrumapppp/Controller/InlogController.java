@@ -69,7 +69,7 @@ public class InlogController {
                         UserSession.setSession(id, gebruikersnaam, teamID);
 
                         // Laad de nieuwe scene na inloggen
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/Team.fxml"));
+                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/TeamSelect.fxml"));
                         Scene homeScene = new Scene(loader.load());
 
                         Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
