@@ -8,18 +8,18 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.scrumapppp.Controller.UserstoryGekoppeldSchermController">
     <children>
-        <ListView fx:id="userstoryListListView" layoutX="98.0" layoutY="132.0" prefHeight="792.0" prefWidth="726.0" />
+        <ListView fx:id="gebruikersListView" layoutX="98.0" layoutY="132.0" prefHeight="792.0" prefWidth="726.0" />
         <Text fx:id="teamName" layoutX="105.0" layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0" text="[Team naam]" wrappingWidth="726.0">
             <font>
                 <Font size="67.0" />
             </font>
         </Text>
-        <Button fx:id="updateUserstoryWithChat" layoutX="1282.0" layoutY="920.0" mnemonicParsing="false" onAction="#transferToChat" prefHeight="77.0" prefWidth="342.0" text="Terug naar chat">
+        <Button layoutX="1282.0" layoutY="920.0" mnemonicParsing="false" onAction="#transferToChat" prefHeight="77.0" prefWidth="342.0" text="Terug naar chat">
             <font>
                 <Font size="36.0" />
             </font>
         </Button>
-        <ListView fx:id="userstoryListListView1" layoutX="920.0" layoutY="128.0" prefHeight="792.0" prefWidth="726.0" />
+        <ListView fx:id="taakListLView" layoutX="920.0" layoutY="128.0" prefHeight="792.0" prefWidth="726.0" />
         <Text layoutX="920.0" layoutY="125.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Taak" wrappingWidth="105.951171875">
             <font>
                 <Font size="24.0" />

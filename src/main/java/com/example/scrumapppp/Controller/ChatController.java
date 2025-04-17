@@ -20,6 +20,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 
 public class ChatController {
 
@@ -248,30 +250,52 @@ public class ChatController {
         }
     }
 
-//    Koppel the userstories to chat navigate
-    @FXML
-    private void connectChat(ActionEvent event){
-        System.out.println("Chat😂 button clicked!");
-        try {
-            // Laad de registratie FXML
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/ChatKiesScherm.fxml"));
-            Scene userstoryScene = new Scene(loader.load());
-
-
-            // Verkrijg de huidige stage
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-
-            // Zet de nieuwe scene
-            stage.setScene(userstoryScene);
-
-            // Zet fullscreen AAN
-            stage.setFullScreen(true);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
+////    Koppel the userstories to chat navigate
+//    @FXML
+//    private void connectChat(ActionEvent event){
+//        System.out.println("Chat😂 button clicked!");
+//        try {
+//            // Laad de registratie FXML
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/ChatKiesScherm.fxml"));
+//            Scene userstoryScene = new Scene(loader.load());
+//
+//
+//            // Verkrijg de huidige stage
+//            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+//
+//            // Zet de nieuwe scene
+//            stage.setScene(userstoryScene);
+//
+//            // Zet fullscreen AAN
+//            stage.setFullScreen(true);
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    @FXML
+//    public void transferToAllUserstory(ActionEvent event){
+//        System.out.println("UserstoryTranser 🤗 button clicked!");
+//        try {
+//            // Laad de registratie FXML
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/TaakGekoppeldScherm.fxml"));
+//            Scene userstoryScene = new Scene(loader.load());
+//
+//
+//            // Verkrijg de huidige stage
+//            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+//
+//            // Zet de nieuwe scene
+//            stage.setScene(userstoryScene);
+//
+//            // Zet fullscreen AAN
+//            stage.setFullScreen(true);
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 
 }

@@ -44,9 +44,13 @@ public class UserstoryGekoppeldSchermController {
         gebruikersListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 selectedUser = newValue.toString();
+                int selectedChatId = newValue.getId(); // get Chat_ID from the ChatMessage object
                 System.out.println("Selected user: " + selectedUser);
+
+                loadUserstoriesForChat(selectedChatId); // ✅ Call the updated method here
             }
         });
+
     }
 
     public void showTeamName() {
@@ -122,28 +126,30 @@ public class UserstoryGekoppeldSchermController {
     }
 
     // Method to fetch the user stories from the database
-    public void loadUserstories() {
+    public void loadUserstoriesForChat(int chatId) {
         ObservableList<UserstoryList> userstories = FXCollections.observableArrayList();
         DatabaseConnection connectionNow = new DatabaseConnection();
         Connection connectDB = connectionNow.getConnection();
 
-        String query = "SELECT Userstory_ID, titel, beschrijving FROM userstory WHERE Team_ID = ?";
+        String query = "SELECT us.Userstory_ID, us.titel, us.beschrijving " +
+                "FROM userstory us " +
+                "JOIN chat_userstory cu ON us.Userstory_ID = cu.Userstory_ID " +
+                "WHERE cu.Chat_ID = ?";
 
         try (PreparedStatement preparedStatement = connectDB.prepareStatement(query)) {
+            preparedStatement.setInt(1, chatId);
+            System.out.println("📥 Query: " + preparedStatement);
 
-            preparedStatement.setInt(1, UserSession.getTeamID());
-            System.out.println("😂:"+ preparedStatement);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
                 int id = resultSet.getInt("Userstory_ID");
-                String text = resultSet.getString("titel");
+                String titel = resultSet.getString("titel");
                 String beschrijving = resultSet.getString("beschrijving");
 
-                userstories.add(new UserstoryList(id, text, beschrijving));  // Add the user story to the list
+                userstories.add(new UserstoryList(id, titel, beschrijving));
             }
 
-            // Set the ListView with the user stories
             userstoryListListView.setItems(userstories);
 
         } catch (SQLException e) {
@@ -156,6 +162,7 @@ public class UserstoryGekoppeldSchermController {
             }
         }
     }
+
 
     @FXML
     public void transferToChat(ActionEvent event){

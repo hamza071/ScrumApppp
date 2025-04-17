@@ -7,20 +7,21 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="1080.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.scrumapppp.Controller.ChatController">
+<AnchorPane prefHeight="1002.0" prefWidth="1920.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.scrumapppp.Controller.ChatController">
 
-    <ListView fx:id="gebruikersListView" layoutX="51.0" layoutY="49.0" prefHeight="638.0" prefWidth="1078.0" />
-    <Button layoutX="1029.0" layoutY="719.0" onAction="#createMessage" text="Verzend bericht" />
-   <TextField fx:id="textMessage" layoutX="51.0" layoutY="719.0" prefHeight="25.0" prefWidth="970.0" promptText="Bericht" />
+    <ListView fx:id="gebruikersListView" layoutX="371.0" layoutY="53.0" prefHeight="830.0" prefWidth="1497.0" />
+    <Button layoutX="1743.0" layoutY="899.0" onAction="#createMessage" text="Verzend bericht" />
+   <TextField fx:id="textMessage" layoutX="371.0" layoutY="899.0" prefHeight="25.0" prefWidth="1352.0" promptText="Bericht" />
    <Label fx:id="teamName" layoutX="51.0" prefHeight="41.0" prefWidth="215.0" text="[Team Naam]">
       <font>
          <Font size="36.0" />
       </font>
    </Label>
-    <Button layoutX="920.0" layoutY="754.0" onAction="#deleteMessage" style="-fx-background-color: red;" text="Delete Message" />
-    <Button layoutX="800.0" layoutY="754.0" onAction="#updateMessage" style="-fx-background-color: green;" text="Update Message" />
-   <Button layoutX="599.0" layoutY="754.0" onAction="#connectChat" text="Koppel aan userstory" />
-   <Button layoutX="917.0" layoutY="14.0" onAction="#createMessage" text="Gekoppelde berichten aan userstory" />
+    <Button layoutX="1608.0" layoutY="943.0" onAction="#deleteMessage" style="-fx-background-color: red;" text="Delete Message" />
+    <Button layoutX="1488.0" layoutY="943.0" onAction="#updateMessage" style="-fx-background-color: green;" text="Update Message" />
+<!--   <Button layoutX="1273.0" layoutY="943.0" onAction="#connectChat" text="Koppel aan userstory" />-->
+<!--   <Button layoutX="313.0" layoutY="14.0" onAction="#transferToAllUserstory" text="Gekoppelde berichten aan userstory" />-->
+   <ListView fx:id="gebruikersListView1" layoutX="51.0" layoutY="53.0" prefHeight="830.0" prefWidth="262.0" />
 
 
 
