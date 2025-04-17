@@ -4,7 +4,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TaakDAO {
+public class TaakDAO implements CrudRepository<Taak>{
 
     public List<Taak> getTakenByUserstoryId(int userstoryId) {
         List<Taak> taken = new ArrayList<>();
@@ -28,6 +28,20 @@ public class TaakDAO {
         }
 
         return taken;
+    }
+
+    @Override
+    public Taak create(Taak entity){
+        return createTaak(entity.getUserstoryId(), entity.getTitel());
+    }
+    @Override
+    public void update(Taak entity){
+        updateTaakStatus(entity.getTaakId(), entity.isDone());
+    }
+
+    @Override
+    public void delete(int id){
+        deleteTaak(id);
     }
 
     public Taak createTaak(int userstoryId, String titel) {

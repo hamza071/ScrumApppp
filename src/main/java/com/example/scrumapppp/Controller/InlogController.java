@@ -1,6 +1,6 @@
 package com.example.scrumapppp.Controller;
 
-import com.example.scrumapppp.DatabaseAndSQL.DatabaseConnection;
+import com.example.scrumapppp.DatabaseAndSQL.*;
 import com.example.scrumapppp.Session.UserSession;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

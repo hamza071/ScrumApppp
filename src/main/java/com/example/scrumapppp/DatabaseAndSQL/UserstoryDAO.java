@@ -4,7 +4,23 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserstoryDAO {
+public class UserstoryDAO implements CrudRepository<Userstory>{
+
+    //    Interface toegepast
+    @Override
+    public Userstory create(Userstory entity) {
+        return createUserstory(entity.getLijstId(), entity.getTitel(), entity.getBeschrijving());
+    }
+
+    @Override
+    public void update(Userstory entity) {
+        updateUserstoryBeschrijving(entity.getUserstoryId(), entity.getBeschrijving());
+    }
+
+    @Override
+    public void delete(int id) {
+        deleteUserstory(id);
+    }
 
     public List<Userstory> getUserstoriesByLijstId(int lijstId) {
         List<Userstory> userstories = new ArrayList<>();

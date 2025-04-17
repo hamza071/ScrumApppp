@@ -1,6 +1,6 @@
 package com.example.scrumapppp.DatabaseAndSQL;
 
-public class Userstory {
+public class  Userstory {
     private int userstoryId;
     private int lijstId;
     private String titel;

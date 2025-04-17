@@ -1,6 +1,6 @@
 package com.example.scrumapppp.Controller;
 
-import com.example.scrumapppp.DatabaseAndSQL.DatabaseConnection;
+import com.example.scrumapppp.DatabaseAndSQL.*;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
