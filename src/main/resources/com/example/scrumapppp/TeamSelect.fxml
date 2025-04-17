@@ -13,33 +13,31 @@
             <children>
 
                 <!-- Title Label -->
-                <Label alignment="CENTER" layoutX="747.0" layoutY="148.0" prefHeight="82.0" prefWidth="486.0" text="Join Team" textAlignment="CENTER">
+                <Label alignment="CENTER" layoutX="589.0" layoutY="137.0" prefHeight="82.0" prefWidth="486.0" text="Join Team" textAlignment="CENTER">
                     <font>
                         <Font size="33.0" />
                     </font>
                 </Label>
 
                 <!-- Label for Team Code -->
-                <Label layoutX="591.0" layoutY="298.0" text="Team Code">
+                <Label layoutX="465.0" layoutY="298.0" text="Team Code">
                     <font>
                         <Font size="21.0" />
                     </font>
                 </Label>
 
                 <!-- TextField voor team naam of code -->
-                <TextField fx:id="teamNaamField1" layoutX="740.0" layoutY="289.0" prefHeight="49.0" prefWidth="499.0" />
+                <TextField fx:id="teamNaamField1" layoutX="583.0" layoutY="289.0" prefHeight="49.0" prefWidth="499.0" />
 
                 <!-- Join Team knop -->
-                <Button fx:id="joinTeamButton" layoutX="875.0" layoutY="428.0" mnemonicParsing="false"
-                        onAction="#handleJoinButtonClick" prefHeight="95.0" prefWidth="229.0" text="Join Team">
+                <Button fx:id="joinTeamButton" layoutX="718.0" layoutY="423.0" mnemonicParsing="false" onAction="#handleJoinButtonClick" prefHeight="95.0" prefWidth="229.0" text="Join Team">
                     <font>
                         <Font size="33.0" />
                     </font>
                 </Button>
 
                 <!-- Create Team knop -->
-                <Button fx:id="createTeamButton" layoutX="875.0" layoutY="657.0" mnemonicParsing="false"
-                        onAction="#handleCreateButtonClick" prefHeight="95.0" prefWidth="229.0" text="Create Team">
+                <Button fx:id="createTeamButton" layoutX="718.0" layoutY="657.0" mnemonicParsing="false" onAction="#handleCreateButtonClick" prefHeight="95.0" prefWidth="229.0" text="Create Team">
                     <font>
                         <Font size="33.0" />
                     </font>

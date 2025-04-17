@@ -49,6 +49,13 @@
                         <Font size="33.0" />
                     </font>
                 </Label>
+
+                <!-- Error Label (Foutmelding onderaan) -->
+                <Label fx:id="errorLabel" layoutX="675.0" layoutY="900.0" textFill="red" visible="false">
+                    <font>
+                        <Font size="18.0" />
+                    </font>
+                </Label>
             </children>
         </AnchorPane>
     </children>
