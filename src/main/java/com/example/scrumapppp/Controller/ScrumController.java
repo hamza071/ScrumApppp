@@ -303,6 +303,7 @@ public class ScrumController {
 
     private void openChatVenster() {
         // Implementatie voor chatvenster kan hier komen
+        //iets
     }
 
     public void setTeamId(int teamId) {
