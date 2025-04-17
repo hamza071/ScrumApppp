@@ -49,4 +49,10 @@ public class TeamSelectController {
         System.out.println("Join Team button clicked");
         // Hier later functionaliteit toevoegen
     }
+
+    public void handleJoinTeam(ActionEvent actionEvent) {
+    }
+
+    public void handleCreateTeam(ActionEvent actionEvent) {
+    }
 }
