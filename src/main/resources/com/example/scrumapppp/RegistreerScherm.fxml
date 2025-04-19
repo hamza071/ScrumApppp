@@ -5,57 +5,49 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" prefHeight="1080.0" prefWidth="1920.0" spacing="10" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.scrumapppp.Controller.RegistreerController">
+<VBox alignment="CENTER" spacing="20.0" prefHeight="1080.0" prefWidth="1920.0"
+      xmlns="http://javafx.com/javafx/23.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.scrumapppp.Controller.RegistreerController">
 
     <padding>
-        <Insets bottom="20" left="20" right="20" top="20" />
+        <Insets top="50" bottom="50" left="50" right="50"/>
     </padding>
-    <AnchorPane prefHeight="1080.0" prefWidth="1920.0">
-        <children>
 
-            <!-- Gebruikersnaam Label -->
-            <Label layoutX="813.0" layoutY="218.0" prefHeight="55.0" prefWidth="255.0" text="Gebruikersnaam:" textAlignment="CENTER">
-                <font>
-                    <Font size="33.0" />
-                </font>
-            </Label>
-            <!-- Gebruikersnaam TextField -->
-            <TextField fx:id="gebruikersnaamField" layoutX="779.0" layoutY="295.0" prefHeight="43.0" prefWidth="346.0" promptText="Voer een gebruikersnaam in" />
+    <Label text="Gebruikersnaam:" textAlignment="CENTER">
+        <font>
+            <Font size="33.0" />
+        </font>
+    </Label>
+    <TextField fx:id="gebruikersnaamField" prefHeight="43.0" prefWidth="400.0" promptText="Voer een gebruikersnaam in"/>
 
-            <!-- Wachtwoord Label -->
-            <Label layoutX="843.0" layoutY="444.0" text="Wachtwoord:">
-                <font>
-                    <Font size="33.0" />
-                </font>
-            </Label>
-            <!-- Wachtwoord PasswordField -->
-            <PasswordField fx:id="wachtwoordField" layoutX="768.0" layoutY="520.0" prefHeight="43.0" prefWidth="346.0" promptText="Voer een wachtwoord in" />
+    <Label text="Wachtwoord:">
+        <font>
+            <Font size="33.0" />
+        </font>
+    </Label>
+    <PasswordField fx:id="wachtwoordField" prefHeight="43.0" prefWidth="400.0" promptText="Voer een wachtwoord in"/>
 
-            <!-- Herhaal Wachtwoord -->
-            <PasswordField fx:id="wachtwoordField1" layoutX="768.0" layoutY="576.0" prefHeight="43.0" prefWidth="346.0" promptText="Voer je wachtwoord nogmaals in" />
+    <PasswordField fx:id="wachtwoordField1" prefHeight="43.0" prefWidth="400.0" promptText="Voer je wachtwoord nogmaals in"/>
 
-            <!-- Registreren Button -->
-            <Button layoutX="780.0" layoutY="679.0" onAction="#handleRegistreren" prefHeight="64.0" prefWidth="294.0" text="Registreren">
-                <font>
-                    <Font size="33.0" />
-                </font>
-            </Button>
+    <Button onAction="#handleRegistreren" prefHeight="64.0" prefWidth="300.0" text="Registreren">
+        <font>
+            <Font size="33.0" />
+        </font>
+    </Button>
 
-            <!-- Status Label voor bericht -->
-            <Label fx:id="statusLabel" layoutX="633.0" layoutY="750.0" prefHeight="40.0" prefWidth="350.0">
-                <font>
-                    <Font size="16.0" />
-                </font>
-            </Label>
-         <Button layoutX="780.0" layoutY="777.0" onAction="#handleInloggen" prefHeight="37.0" prefWidth="294.0" text="Terug naar inlogpagina">
-            <font>
-               <Font size="17.0" />
-            </font>
-         </Button>
-        </children>
-    </AnchorPane>
+    <Label fx:id="statusLabel" prefHeight="40.0" prefWidth="350.0">
+        <font>
+            <Font size="16.0" />
+        </font>
+    </Label>
+
+    <Button onAction="#handleInloggen" prefHeight="37.0" prefWidth="300.0" text="Terug naar inlogpagina">
+        <font>
+            <Font size="17.0" />
+        </font>
+    </Button>
 </VBox>
