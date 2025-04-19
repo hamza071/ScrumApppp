@@ -18,28 +18,28 @@
         <children>
 
             <!-- Gebruikersnaam Label -->
-            <Label layoutX="652.0" layoutY="219.0" prefHeight="55.0" prefWidth="255.0" text="Gebruikersnaam:" textAlignment="CENTER">
+            <Label layoutX="813.0" layoutY="218.0" prefHeight="55.0" prefWidth="255.0" text="Gebruikersnaam:" textAlignment="CENTER">
                 <font>
                     <Font size="33.0" />
                 </font>
             </Label>
             <!-- Gebruikersnaam TextField -->
-            <TextField fx:id="gebruikersnaamField" layoutX="606.0" layoutY="301.0" prefHeight="43.0" prefWidth="346.0" promptText="Voer een gebruikersnaam in" />
+            <TextField fx:id="gebruikersnaamField" layoutX="779.0" layoutY="295.0" prefHeight="43.0" prefWidth="346.0" promptText="Voer een gebruikersnaam in" />
 
             <!-- Wachtwoord Label -->
-            <Label layoutX="682.0" layoutY="445.0" text="Wachtwoord:">
+            <Label layoutX="843.0" layoutY="444.0" text="Wachtwoord:">
                 <font>
                     <Font size="33.0" />
                 </font>
             </Label>
             <!-- Wachtwoord PasswordField -->
-            <PasswordField fx:id="wachtwoordField" layoutX="606.0" layoutY="512.0" prefHeight="43.0" prefWidth="346.0" promptText="Voer een wachtwoord in" />
+            <PasswordField fx:id="wachtwoordField" layoutX="768.0" layoutY="520.0" prefHeight="43.0" prefWidth="346.0" promptText="Voer een wachtwoord in" />
 
             <!-- Herhaal Wachtwoord -->
-            <PasswordField fx:id="wachtwoordField1" layoutX="606.0" layoutY="573.0" prefHeight="43.0" prefWidth="346.0" promptText="Voer je wachtwoord nogmaals in" />
+            <PasswordField fx:id="wachtwoordField1" layoutX="768.0" layoutY="576.0" prefHeight="43.0" prefWidth="346.0" promptText="Voer je wachtwoord nogmaals in" />
 
             <!-- Registreren Button -->
-            <Button layoutX="633.0" layoutY="680.0" onAction="#handleRegistreren" prefHeight="64.0" prefWidth="294.0" text="Registreren">
+            <Button layoutX="780.0" layoutY="679.0" onAction="#handleRegistreren" prefHeight="64.0" prefWidth="294.0" text="Registreren">
                 <font>
                     <Font size="33.0" />
                 </font>
@@ -51,7 +51,7 @@
                     <Font size="16.0" />
                 </font>
             </Label>
-         <Button layoutX="633.0" layoutY="772.0" onAction="#handleInloggen" prefHeight="37.0" prefWidth="294.0" text="Terug naar inlogpagina">
+         <Button layoutX="780.0" layoutY="777.0" onAction="#handleInloggen" prefHeight="37.0" prefWidth="294.0" text="Terug naar inlogpagina">
             <font>
                <Font size="17.0" />
             </font>
