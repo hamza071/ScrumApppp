@@ -1,6 +1,7 @@
 package com.example.scrumapppp.Controller;
 
 import com.example.scrumapppp.DatabaseAndSQL.*;
+import com.example.scrumapppp.Session.UserSession;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
@@ -24,8 +25,7 @@ public class ChatController {
     @FXML private TextField inputField;
     @FXML private Label groepTitelLabel;
 
-    private final int teamId = 1;
-
+    private final int teamId = UserSession.getTeamID(); // ✅ Haal team-ID uit sessie
     private final SprintDAO sprintDAO = new SprintDAO();
     private final LijstDAO lijstDAO = new LijstDAO();
     private final UserstoryDAO userstoryDAO = new UserstoryDAO();
@@ -80,7 +80,7 @@ public class ChatController {
     private void verstuurBericht() {
         String bericht = inputField.getText().trim();
         if (!bericht.isEmpty() && huidigeGroep != null) {
-            String gebruiker = "Hamza"; // Later vervangen met ingelogde gebruiker
+            String gebruiker = UserSession.getUsername(); // ✅ Naam van ingelogde gebruiker
 
             ChatBericht nieuwBericht = new ChatBericht(
                     huidigeGroep,
@@ -153,7 +153,7 @@ public class ChatController {
                 String groepsnaam = naam.toString();
                 if (!groepsnaam.isBlank()) {
                     chatGroepDAO.voegGroepToe(teamId, groepsnaam);
-                    laadAlleGroepen(); // vernieuw de lijst
+                    laadAlleGroepen();
                 }
             }
             return null;
@@ -168,9 +168,8 @@ public class ChatController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/ScrumScherm.fxml"));
             Parent root = loader.load();
 
-            // Indien nodig kan hier teamId worden meegegeven aan ScrumController
-            // ScrumController controller = loader.getController();
-            // controller.setTeamId(teamId);
+            ScrumController controller = loader.getController();
+            controller.setTeamId(teamId); // ✅ TeamId doorgeven aan controller
 
             Stage huidigeStage = (Stage) groepListView.getScene().getWindow();
             huidigeStage.setScene(new Scene(root));

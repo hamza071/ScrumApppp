@@ -1,36 +1,26 @@
 package com.example.scrumapppp.Controller;
 
-import com.example.scrumapppp.DatabaseAndSQL.DatabaseConnection;
+import com.example.scrumapppp.DatabaseAndSQL.DatabaseManager;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
+
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 public class RegistreerController {
 
-    @FXML
-    private TextField gebruikersnaamField;
-
-    @FXML
-    private PasswordField wachtwoordField;
-
-    @FXML
-    private PasswordField wachtwoordField1;
-
-    @FXML
-    private Label statusLabel;
+    @FXML private TextField gebruikersnaamField;
+    @FXML private PasswordField wachtwoordField;
+    @FXML private PasswordField wachtwoordField1;
+    @FXML private Label statusLabel;
 
     @FXML
     private void handleRegistreren() {
@@ -66,13 +56,18 @@ public class RegistreerController {
 
         boolean success = registerUser(gebruikersnaam, hashedWachtwoord);
         if (success) {
-            statusLabel.setText("Gebruikersnaam aangemaakt!");
-            showAlert("Registratie succesvol", "Je account is aangemaakt. Je wordt doorgestuurd naar de loginpagina.", AlertType.INFORMATION);
-            navigateToLogin();
+            statusLabel.setText("Gebruiker aangemaakt!");
+            showAlert("Registratie succesvol", "Je account is aangemaakt.", Alert.AlertType.INFORMATION);
+
+            // Optioneel: velden leegmaken
+            gebruikersnaamField.clear();
+            wachtwoordField.clear();
+            wachtwoordField1.clear();
         } else {
             statusLabel.setText("Registratie mislukt. Probeer het opnieuw.");
         }
     }
+
 
     @FXML
     private void handleInloggen() {
@@ -80,8 +75,7 @@ public class RegistreerController {
     }
 
     private boolean isGebruikersnaamInGebruik(String gebruikersnaam) {
-        DatabaseConnection connection = new DatabaseConnection();
-        try (Connection dbConnection = connection.getConnection()) {
+        try (Connection dbConnection = DatabaseManager.getConnection()) {
             String query = "SELECT COUNT(*) FROM gebruiker WHERE naam = ?";
             try (PreparedStatement stmt = dbConnection.prepareStatement(query)) {
                 stmt.setString(1, gebruikersnaam);
@@ -93,15 +87,14 @@ public class RegistreerController {
                 }
             }
         } catch (SQLException e) {
-            showAlert("Databasefout", "Er is een fout opgetreden bij het controleren van de gebruikersnaam.", AlertType.ERROR);
+            showAlert("Databasefout", "Er is een fout opgetreden bij het controleren van de gebruikersnaam.", Alert.AlertType.ERROR);
             e.printStackTrace();
         }
         return false;
     }
 
     private boolean registerUser(String gebruikersnaam, String wachtwoord) {
-        DatabaseConnection connection = new DatabaseConnection();
-        try (Connection dbConnection = connection.getConnection()) {
+        try (Connection dbConnection = DatabaseManager.getConnection()) {
             String query = "INSERT INTO gebruiker (naam, wachtwoord) VALUES (?, ?)";
             try (PreparedStatement stmt = dbConnection.prepareStatement(query)) {
                 stmt.setString(1, gebruikersnaam);
@@ -110,7 +103,7 @@ public class RegistreerController {
                 return result > 0;
             }
         } catch (SQLException e) {
-            showAlert("Databasefout", "Er is een fout opgetreden bij het registreren van je account. Probeer het later opnieuw.", AlertType.ERROR);
+            showAlert("Databasefout", "Er is een fout opgetreden bij het registreren van je account. Probeer het later opnieuw.", Alert.AlertType.ERROR);
             e.printStackTrace();
             return false;
         }
@@ -141,15 +134,15 @@ public class RegistreerController {
             currentStage.setTitle("Inloggen");
 
             currentStage.centerOnScreen();
-            currentStage.setFullScreen(true); // Zet het scherm op volledig scherm
+            currentStage.setFullScreen(true);
             currentStage.show();
         } catch (IOException e) {
-            showAlert("Fout", "Er is een fout opgetreden bij het laden van de inlogpagina.", AlertType.ERROR);
+            showAlert("Fout", "Er is een fout opgetreden bij het laden van de inlogpagina.", Alert.AlertType.ERROR);
             e.printStackTrace();
         }
     }
 
-    private void showAlert(String title, String content, AlertType type) {
+    private void showAlert(String title, String content, Alert.AlertType type) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(null);

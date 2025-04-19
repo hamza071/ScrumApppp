@@ -7,19 +7,13 @@ import java.sql.SQLException;
 
 public class TeamDAO {
 
-    // Maak een instantie van DatabaseConnection
-    private DatabaseConnection databaseConnection;
-    private Connection connection;
-
-    public TeamDAO() {
-        this.databaseConnection = new DatabaseConnection();  // Maak een instantie van DatabaseConnection
-        this.connection = databaseConnection.getConnection();  // Verkrijg de verbinding
-    }
-
-    // Methode om een team te maken
+    // ✅ Methode om een team aan te maken via DatabaseManager
     public Team createTeam(String teamNaam) {
-        String query = "INSERT INTO teams (naam) VALUES (?)";
-        try (PreparedStatement stmt = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {
+        String query = "INSERT INTO team (naam) VALUES (?)";
+
+        try (Connection connection = DatabaseManager.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {
+
             stmt.setString(1, teamNaam);
             int affectedRows = stmt.executeUpdate();
 
@@ -27,13 +21,16 @@ public class TeamDAO {
                 try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
                         int teamId = generatedKeys.getInt(1);
-                        return new Team(teamId, teamNaam);  // Return het aangemaakte team met gegenereerd ID
+                        return new Team(teamId, teamNaam); // ✅ Nieuw team-object met ID en naam
                     }
                 }
             }
+
         } catch (SQLException e) {
+            System.out.println("❌ Fout bij aanmaken team: " + e.getMessage());
             e.printStackTrace();
         }
-        return null;  // Retourneer null als er iets misgaat
+
+        return null; // ❌ Als het niet gelukt is
     }
 }

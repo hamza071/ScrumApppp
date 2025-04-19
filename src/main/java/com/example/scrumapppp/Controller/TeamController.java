@@ -1,7 +1,7 @@
 package com.example.scrumapppp.Controller;
 
-import com.example.scrumapppp.DatabaseAndSQL.Team;
-import com.example.scrumapppp.DatabaseAndSQL.TeamDAO;
+import com.example.scrumapppp.DatabaseAndSQL.*;
+import com.example.scrumapppp.Session.UserSession;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,72 +11,90 @@ import javafx.stage.Stage;
 import javafx.scene.control.TextField;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class TeamController {
 
     @FXML
-    private TextField teamNaamField;  // Tekstveld voor teamnaam
+    private TextField teamNaamField;
 
     @FXML
-    private Label errorLabel;  // Foutmelding Label
+    private Label errorLabel;
 
-    private TeamDAO teamDAO = new TeamDAO();  // TeamDAO voor database-interactie
+    private final TeamDAO teamDAO = new TeamDAO();
+    private int teamId;
 
-    private int teamId;  // teamId voor de nieuwe team
-
-    // Deze methode wordt aangeroepen wanneer de "Creëren" knop wordt geklikt
     @FXML
     private void handleCreateButtonClick(ActionEvent event) {
-        // Verkrijg de naam van het team
         String teamNaam = teamNaamField.getText().trim();
 
-        // Controleer of de teamnaam is ingevuld
         if (teamNaam.isEmpty()) {
             showError("Je moet een teamnaam invoeren!");
-            return;  // Stop als de naam niet is ingevuld
+            return;
         }
 
-        // Maak een nieuw team in de database via de TeamDAO
         Team team = teamDAO.createTeam(teamNaam);
         if (team != null) {
-            // Als het team succesvol is aangemaakt, stel de teamId in
-            teamId = team.getId();  // teamId wordt ingesteld op de nieuwe teamId
+            teamId = team.getId();
 
-            // Ga naar het Scrumboard scherm
+            // ✅ Koppel gebruiker aan het nieuwe team
+            koppelGebruikerAanTeam(teamId);
+
+            // ✅ Ga door naar het Scrumboard
             openScrumBoard();
         } else {
-            // Als het aanmaken van het team mislukt, toon een foutmelding
             showError("Het aanmaken van het team is mislukt.");
         }
     }
 
-    // Methode om naar het Scrumboard scherm over te schakelen
-    private void openScrumBoard() {
-        try {
-            // Laad het Scrumboard scherm
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/views/scrumboard.fxml"));
-            Stage stage = new Stage();
-            Scene scene = new Scene(loader.load());
+    private void koppelGebruikerAanTeam(int teamId) {
+        int gebruikerId = UserSession.getID(); // juiste methode
 
-            // Verkrijg de ScrumController en geef de teamId door
-            ScrumController controller = loader.getController();
-            controller.setTeamId(teamId);  // Geef de teamId door aan de ScrumController
+        try (Connection conn = DatabaseManager.getConnection()) {
+            PreparedStatement stmt = conn.prepareStatement(
+                    "UPDATE gebruiker SET Team_ID = ? WHERE Gebruiker_ID = ?"
+            );
+            stmt.setInt(1, teamId);
+            stmt.setInt(2, gebruikerId);
+            stmt.executeUpdate();
 
-            // Toon het Scrumboard scherm
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();  // Log eventuele fouten
+            // update sessie
+            UserSession.setTeamID(teamId);
+            System.out.println("Gebruiker gekoppeld aan team ID: " + teamId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            showError("Kon gebruiker niet koppelen aan het team.");
         }
     }
 
-    // Methode om een foutmelding weer te geven onderaan het scherm
-    private void showError(String message) {
-        errorLabel.setText(message);  // Zet de foutmelding in de label
-        errorLabel.setVisible(true);  // Maak de label zichtbaar
+    private void openScrumBoard() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/ScrumScherm.fxml")); // ✅ Aangepaste locatie
+            Scene scene = new Scene(loader.load());
+
+            ScrumController controller = loader.getController();
+            controller.setTeamId(teamId);
+
+            Stage stage = new Stage();
+            stage.setTitle("Scrum Board");
+            stage.setScene(scene);
+            stage.setFullScreen(true);
+            stage.show();
+
+            ((Stage) teamNaamField.getScene().getWindow()).close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showError("Kon het Scrumboard niet openen.");
+        }
     }
 
-    // Setter voor teamId (indien nodig in ScrumController)
+    private void showError(String message) {
+        errorLabel.setText(message);
+        errorLabel.setVisible(true);
+    }
+
     public void setTeamId(int teamId) {
         this.teamId = teamId;
     }
