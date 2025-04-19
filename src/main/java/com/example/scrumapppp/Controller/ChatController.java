@@ -25,7 +25,7 @@ public class ChatController {
     @FXML private TextField inputField;
     @FXML private Label groepTitelLabel;
 
-    private final int teamId = UserSession.getTeamID(); // ✅ Haal team-ID uit sessie
+    private final int teamId = UserSession.getTeamID();
     private final SprintDAO sprintDAO = new SprintDAO();
     private final LijstDAO lijstDAO = new LijstDAO();
     private final UserstoryDAO userstoryDAO = new UserstoryDAO();
@@ -104,9 +104,10 @@ public class ChatController {
         ComboBox<Sprint> sprintComboBox = new ComboBox<>();
         ComboBox<Lijst> lijstComboBox = new ComboBox<>();
         ComboBox<Userstory> userStoryComboBox = new ComboBox<>();
-        ComboBox<Taak> taakComboBox = new ComboBox<>();
+        ComboBox<String> taakComboBox = new ComboBox<>();
         ComboBox<String> epicComboBox = new ComboBox<>();
-        epicComboBox.getItems().add("– Geen –");
+
+        EpicDAO epicDAO = new EpicDAO();
 
         sprintComboBox.getItems().addAll(sprintDAO.getSprintsByTeamId(teamId));
 
@@ -114,26 +115,45 @@ public class ChatController {
             Sprint s = sprintComboBox.getValue();
             lijstComboBox.getItems().setAll(s != null ? lijstDAO.getLijstenBySprintId(s.getSprintId()) : List.of());
             userStoryComboBox.getItems().clear();
-            taakComboBox.getItems().clear();
+            taakComboBox.getItems().setAll("– Geen –");
+            epicComboBox.getItems().setAll("– Geen –");
         });
 
         lijstComboBox.setOnAction(e -> {
             Lijst l = lijstComboBox.getValue();
             userStoryComboBox.getItems().setAll(l != null ? userstoryDAO.getUserstoriesByLijstId(l.getLijstId()) : List.of());
-            taakComboBox.getItems().clear();
+            taakComboBox.getItems().setAll("– Geen –");
+            epicComboBox.getItems().setAll("– Geen –");
         });
 
         userStoryComboBox.setOnAction(e -> {
             Userstory us = userStoryComboBox.getValue();
-            taakComboBox.getItems().setAll(us != null ? taakDAO.getTakenByUserstoryId(us.getUserstoryId()) : List.of());
+
+            // Taken laden (als Strings)
+            taakComboBox.getItems().clear();
+            taakComboBox.getItems().add("– Geen –");
+            if (us != null) {
+                for (Taak taak : taakDAO.getTakenByUserstoryId(us.getUserstoryId())) {
+                    taakComboBox.getItems().add(taak.getTitel());
+                }
+            }
+
+            // Epics laden
+            epicComboBox.getItems().clear();
+            epicComboBox.getItems().add("– Geen –");
+            if (us != null) {
+                for (Epic epic : epicDAO.getEpicsByUserstoryId(us.getUserstoryId())) {
+                    epicComboBox.getItems().add(epic.getTitel());
+                }
+            }
         });
 
         VBox content = new VBox(10,
                 new Label("Sprint:"), sprintComboBox,
                 new Label("Lijst:"), lijstComboBox,
                 new Label("User Story:"), userStoryComboBox,
-                new Label("Taak:"), taakComboBox,
-                new Label("Epic (optioneel):"), epicComboBox
+                new Label("Epic"), epicComboBox,
+                new Label("Taak"), taakComboBox
         );
         dialog.getDialogPane().setContent(content);
 
@@ -143,12 +163,23 @@ public class ChatController {
         dialog.setResultConverter(dialogBtn -> {
             if (dialogBtn == makenBtnType) {
                 StringBuilder naam = new StringBuilder();
-                if (sprintComboBox.getValue() != null) naam.append(sprintComboBox.getValue().getNaam());
-                if (lijstComboBox.getValue() != null) naam.append(" > ").append(lijstComboBox.getValue().getNaam());
-                if (userStoryComboBox.getValue() != null) naam.append(" > ").append(userStoryComboBox.getValue().getTitel());
-                if (taakComboBox.getValue() != null) naam.append(" > ").append(taakComboBox.getValue().getTitel());
-                if (epicComboBox.getValue() != null && !epicComboBox.getValue().equals("– Geen –"))
-                    naam.append(" > ").append(epicComboBox.getValue());
+
+                if (sprintComboBox.getValue() != null)
+                    naam.append(sprintComboBox.getValue().getNaam());
+
+                if (lijstComboBox.getValue() != null)
+                    naam.append(" > ").append(lijstComboBox.getValue().getNaam());
+
+                if (userStoryComboBox.getValue() != null)
+                    naam.append(" > ").append(userStoryComboBox.getValue().getTitel());
+
+                String epicTitel = epicComboBox.getValue();
+                if (epicTitel != null && !epicTitel.equals("– Geen –"))
+                    naam.append(" > ").append(epicTitel);
+
+                String taakTitel = taakComboBox.getValue();
+                if (taakTitel != null && !taakTitel.equals("– Geen –"))
+                    naam.append(" > ").append(taakTitel);
 
                 String groepsnaam = naam.toString();
                 if (!groepsnaam.isBlank()) {

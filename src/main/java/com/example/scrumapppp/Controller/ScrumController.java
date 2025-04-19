@@ -230,15 +230,33 @@ public class ScrumController {
         VBox layout = new VBox(10);
         layout.setStyle("-fx-padding: 20;");
 
+        // Beschrijving
+        Label beschrijvingLabel = new Label("Beschrijving:");
         TextArea beschrijvingArea = new TextArea(userstory.getBeschrijving());
         beschrijvingArea.setWrapText(true);
 
-        Button opslaan = new Button("Opslaan Beschrijving");
-        opslaan.setOnAction(e -> {
+        Button beschrijvingOpslaan = new Button("Opslaan Beschrijving");
+        beschrijvingOpslaan.setOnAction(e -> {
             userstory.setBeschrijving(beschrijvingArea.getText());
             userstoryDAO.updateUserstoryBeschrijving(userstory.getUserstoryId(), beschrijvingArea.getText());
         });
 
+        // Epics
+        Label epicLabel = new Label("Epics:");
+        VBox epicBox = new VBox(5);
+        EpicDAO epicDAO = new EpicDAO();
+        List<Epic> epics = epicDAO.getEpicsByUserstoryId(userstory.getUserstoryId());
+        for (Epic epic : epics) {
+            epicBox.getChildren().add(maakEpicItem(epic, epicBox));
+        }
+
+        Button epicToevoegen = new Button("+ Voeg Epic Toe");
+        epicToevoegen.setOnAction(e -> openNieuweEpicDialog(userstory, epicBox));
+
+        Separator lijn = new Separator();
+
+        // Taken
+        Label takenLabel = new Label("Taken:");
         VBox takenBox = new VBox(5);
         for (Taak taak : taakDAO.getTakenByUserstoryId(userstory.getUserstoryId())) {
             takenBox.getChildren().add(maakTaakItem(taak, takenBox));
@@ -246,9 +264,6 @@ public class ScrumController {
 
         Button taakToevoegen = new Button("+ Voeg Taak Toe");
         taakToevoegen.setOnAction(e -> openNieuweTaakDialog(userstory));
-
-        Region spacer = new Region();
-        VBox.setVgrow(spacer, Priority.ALWAYS);
 
         Button verwijderen = new Button("❌ Verwijder User Story");
         verwijderen.setStyle("-fx-background-color: red; -fx-text-fill: white;");
@@ -258,16 +273,21 @@ public class ScrumController {
             laadBoard();
         });
 
+        Region spacer = new Region();
+        VBox.setVgrow(spacer, Priority.ALWAYS);
+
         HBox deleteBox = new HBox(verwijderen);
         deleteBox.setAlignment(Pos.BOTTOM_RIGHT);
 
         layout.getChildren().addAll(
-                new Label("Beschrijving:"), beschrijvingArea, opslaan,
-                new Label("Taken:"), takenBox, taakToevoegen,
+                beschrijvingLabel, beschrijvingArea, beschrijvingOpslaan,
+                epicLabel, epicBox, epicToevoegen,
+                lijn,
+                takenLabel, takenBox, taakToevoegen,
                 spacer, deleteBox
         );
 
-        popup.setScene(new Scene(layout, 400, 600));
+        popup.setScene(new Scene(layout, 450, 600));
         popup.show();
     }
 
@@ -327,5 +347,44 @@ public class ScrumController {
             e.printStackTrace();
             showAlert("Fout bij openen", "Het chatscherm kon niet worden geladen.", Alert.AlertType.ERROR);
         }
+    }
+
+    private HBox maakEpicItem(Epic epic, VBox epicBox) {
+        Label label = new Label("• " + epic.getTitel());
+
+        Button deleteBtn = new Button("🗑️");
+        deleteBtn.setOnAction(e -> {
+            EpicDAO epicDAO = new EpicDAO();
+            epicDAO.deleteEpic(epic.getEpicId());
+            epicBox.getChildren().removeIf(n -> n == deleteBtn.getParent());
+        });
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        HBox item = new HBox(5, label, spacer, deleteBtn);
+        item.setAlignment(Pos.CENTER_LEFT);
+        return item;
+    }
+
+    private void openNieuweEpicDialog(Userstory userstory, VBox epicBox) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Nieuwe Epic");
+        dialog.setHeaderText("Nieuwe epic toevoegen aan user story: " + userstory.getTitel());
+        dialog.setContentText("Voer een titel in voor de epic:");
+
+        dialog.showAndWait().ifPresent(titel -> {
+            if (titel.trim().isEmpty()) {
+                showAlert("Ongeldige invoer", "De titel mag niet leeg zijn.", Alert.AlertType.WARNING);
+            } else {
+                EpicDAO epicDAO = new EpicDAO();
+                Epic nieuweEpic = epicDAO.createEpic(userstory.getUserstoryId(), titel.trim());
+                if (nieuweEpic != null) {
+                    epicBox.getChildren().add(maakEpicItem(nieuweEpic, epicBox));
+                } else {
+                    showAlert("Fout bij opslaan", "De epic kon niet worden aangemaakt.", Alert.AlertType.ERROR);
+                }
+            }
+        });
     }
 }

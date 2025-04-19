@@ -4,9 +4,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserstoryDAO implements CrudRepository<Userstory>{
+public class UserstoryDAO implements CrudRepository<Userstory> {
 
-    //    Interface toegepast
     @Override
     public Userstory create(Userstory entity) {
         return createUserstory(entity.getLijstId(), entity.getTitel(), entity.getBeschrijving());
@@ -15,6 +14,7 @@ public class UserstoryDAO implements CrudRepository<Userstory>{
     @Override
     public void update(Userstory entity) {
         updateUserstoryBeschrijving(entity.getUserstoryId(), entity.getBeschrijving());
+        // Epic wordt beheerd in EpicDAO, dus niet hier.
     }
 
     @Override
@@ -37,7 +37,8 @@ public class UserstoryDAO implements CrudRepository<Userstory>{
                         rs.getInt("Userstory_ID"),
                         rs.getInt("Lijst_ID"),
                         rs.getString("titel"),
-                        rs.getString("beschrijving")
+                        rs.getString("beschrijving"),
+                        null // geen epic ophalen uit userstory-tabel
                 );
                 userstories.add(userstory);
             }
@@ -63,7 +64,7 @@ public class UserstoryDAO implements CrudRepository<Userstory>{
                 ResultSet keys = stmt.getGeneratedKeys();
                 if (keys.next()) {
                     int id = keys.getInt(1);
-                    return new Userstory(id, lijstId, titel, beschrijving);
+                    return new Userstory(id, lijstId, titel, beschrijving, null);
                 }
             }
         } catch (SQLException e) {
@@ -73,7 +74,6 @@ public class UserstoryDAO implements CrudRepository<Userstory>{
         return null;
     }
 
-    // ⭐ Voor slepen/verplaatsen naar een andere lijst
     public void updateUserstoryLijst(int userstoryId, int nieuweLijstId) {
         String sql = "UPDATE userstory SET Lijst_ID = ? WHERE Userstory_ID = ?";
 
