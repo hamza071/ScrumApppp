@@ -6,61 +6,56 @@ public class UserSession {
 
     private int id;
     private String username;
-    private int teamID;// Add other fields as needed
-    // Add this in UserSession.java
+    private int teamID;
     private static int selectedUserstoryId;
 
-
-    private UserSession(int id, String username, int teamID)
-    {
+    private UserSession(int id, String username, int teamID) {
         this.id = id;
         this.username = username;
         this.teamID = teamID;
     }
 
-    // Singleton instance getter
+    // Singleton instance setter
     public static void setSession(int id, String username, int teamID) {
         if (setSession == null) {
             setSession = new UserSession(id, username, teamID);
-            System.out.println("Session created: " + id + ", " + username +  ", " + teamID);
-        } else if(UserSession.getSession() == null){
+            System.out.println("Session created: " + id + ", " + username + ", " + teamID);
+        } else if (UserSession.getSession() == null) {
             System.out.println("User is not logged in!");
-        } else{
-            System.out.println("Session has already been created🤓.");
+        } else {
+            System.out.println("Session has already been created 🤓.");
         }
     }
 
-    public static UserSession getSession(){
+    // ✅ Nieuw toegevoegd: teamID bijwerken
+    public static void setTeamID(int newTeamID) {
+        if (setSession != null) {
+            setSession.teamID = newTeamID;
+            System.out.println("Team ID updated in session: " + newTeamID);
+        }
+    }
+
+    public static UserSession getSession() {
         return setSession;
     }
 
-    public static String getUsername(){
-        if (setSession != null) {
-            return setSession.username;  // Return the username from
-            // the current session
-        } else {
-            return "No user logged in";  // Return a default message if no session is active
-        }
+    public static String getUsername() {
+        return setSession != null ? setSession.username : "No user logged in";
     }
 
-
-    public static int getID(){
-        if (setSession != null) {
-            return setSession.id;  // Return the username from the current session
-        } else {
-            return 0;  // Return a default message if no session is active
-        }
+    public static String getNaam() {  // ✅ Toegevoegd voor gemak
+        return getUsername();
     }
 
-    public static int getTeamID(){
-        if (setSession != null) {
-            return setSession.teamID;  // Return the username from the current session
-        } else {
-            return 0;  // Return a default message if no session is active
-        }
+    public static int getID() {
+        return setSession != null ? setSession.id : 0;
     }
 
-    public static String getData(){
+    public static int getTeamID() {
+        return setSession != null ? setSession.teamID : 0;
+    }
+
+    public static String getData() {
         return "UserSession{" +
                 "id=" + setSession.id +
                 ", username='" + setSession.username + '\'' +
@@ -68,12 +63,10 @@ public class UserSession {
                 '}';
     }
 
-    // 💀Clear the session
     public static void clearSession() {
         setSession = null;
     }
 
-    //    Userstory, outside the user-id class
     public static void setSelectedUserstoryId(int id) {
         selectedUserstoryId = id;
         System.out.println("Selected Userstory ID set: " + id);
@@ -83,9 +76,6 @@ public class UserSession {
         return selectedUserstoryId;
     }
 
-
-
-    // Optional: Add a toString method for debugging
     @Override
     public String toString() {
         return "UserSession{" +

@@ -1,9 +1,11 @@
 package com.example.scrumapppp.Controller;
 
 import com.example.scrumapppp.DatabaseAndSQL.*;
+import com.example.scrumapppp.Session.UserSession;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -11,9 +13,7 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-
 
 import java.util.List;
 import java.util.Optional;
@@ -30,11 +30,26 @@ public class ScrumController {
     private UserstoryDAO userstoryDAO;
     private TaakDAO taakDAO;
 
-    private int teamId = 1;
+    private int teamId;
     private Sprint geselecteerdeSprint;
+
+    private boolean isGeinitialiseerd = false;
 
     @FXML
     private void initialize() {
+        // Nog niets doen tot teamId gezet is
+    }
+
+    public void setTeamId(int teamId) {
+        this.teamId = teamId;
+        UserSession.setTeamID(teamId); // optioneel, zodat ook andere schermen het weten
+        initScrumBoard();
+    }
+
+    private void initScrumBoard() {
+        if (isGeinitialiseerd) return; // voorkomen dat dit per ongeluk 2x gebeurt
+        isGeinitialiseerd = true;
+
         sprintDAO = new SprintDAO();
         lijstDAO = new LijstDAO();
         userstoryDAO = new UserstoryDAO();
@@ -103,21 +118,6 @@ public class ScrumController {
         }
     }
 
-    private void maakNieuweSprint() {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Nieuwe Sprint");
-        dialog.setHeaderText(null);
-        dialog.setContentText("Geef een naam voor de sprint:");
-
-        dialog.showAndWait().ifPresent(naam -> {
-            Sprint nieuwe = sprintDAO.createSprint(teamId, naam);
-            if (nieuwe != null) {
-                laadSprints();
-                sprintComboBox.setValue(nieuwe);
-            }
-        });
-    }
-
     private void laadBoard() {
         boardHBox.getChildren().clear();
         if (geselecteerdeSprint == null) return;
@@ -139,6 +139,21 @@ public class ScrumController {
         dialog.showAndWait().ifPresent(naam -> {
             Lijst nieuweLijst = lijstDAO.createLijst(teamId, geselecteerdeSprint.getSprintId(), naam);
             if (nieuweLijst != null) laadBoard();
+        });
+    }
+
+    private void maakNieuweSprint() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Nieuwe Sprint");
+        dialog.setHeaderText(null);
+        dialog.setContentText("Geef een naam voor de sprint:");
+
+        dialog.showAndWait().ifPresent(naam -> {
+            Sprint nieuwe = sprintDAO.createSprint(teamId, naam);
+            if (nieuwe != null) {
+                laadSprints();
+                sprintComboBox.setValue(nieuwe);
+            }
         });
     }
 
@@ -270,9 +285,7 @@ public class ScrumController {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        HBox taakItem = new HBox(5, checkbox, spacer, deleteBtn);
-        taakItem.setFillHeight(true);
-        return taakItem;
+        return new HBox(5, checkbox, spacer, deleteBtn);
     }
 
     private void openNieuweTaakDialog(Userstory userstory) {
@@ -281,8 +294,7 @@ public class ScrumController {
         dialog.setHeaderText("Nieuwe taak toevoegen aan user story: " + userstory.getTitel());
         dialog.setContentText("Voer een titel in voor de taak:");
 
-        Optional<String> result = dialog.showAndWait();
-        result.ifPresent(titel -> {
+        dialog.showAndWait().ifPresent(titel -> {
             if (titel.trim().isEmpty()) {
                 showAlert("Ongeldige invoer", "De titel mag niet leeg zijn.", Alert.AlertType.WARNING);
             } else {
@@ -308,19 +320,12 @@ public class ScrumController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/ChatsScherm.fxml"));
             Parent root = loader.load();
-
-            // Huidig venster vervangen
             Stage huidigeStage = (Stage) mainLayout.getScene().getWindow();
-            Scene nieuweScene = new Scene(root);
-            huidigeStage.setScene(nieuweScene);
+            huidigeStage.setScene(new Scene(root));
             huidigeStage.setTitle("Chat");
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Fout bij openen", "Het chatscherm kon niet worden geladen.", Alert.AlertType.ERROR);
         }
-    }
-
-    public void setTeamId(int teamId) {
-        this.teamId = teamId;
     }
 }
