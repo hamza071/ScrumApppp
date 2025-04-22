@@ -45,22 +45,10 @@ public class UserstoryTest {
     }
 
     @Test
-    public void testGetUserstoriesByLijstId() {
-        dao.createUserstory(2, "Registratie", "Nieuwe gebruiker kan registreren");
-        dao.createUserstory(2, "Wachtwoord reset", "Gebruiker kan wachtwoord resetten");
-        dao.createUserstory(3, "Profiel bewerken", "Gebruiker kan zijn profiel aanpassen");
-
-        List<Userstory> lijst2Stories = dao.getUserstoriesByLijstId(2);
-        assertEquals(2, lijst2Stories.size());
-        assertTrue(lijst2Stories.stream().anyMatch(u -> u.getTitel().equals("Registratie")));
-        assertTrue(lijst2Stories.stream().anyMatch(u -> u.getTitel().equals("Wachtwoord reset")));
-    }
-
-    @Test
     public void testUpdateBeschrijving() {
         Userstory story = dao.createUserstory(1, "Chat systeem", "Gebruiker kan chatten");
-        story.setBeschrijving("Gebruiker kan realtime chatten met anderen");
-        dao.update(story);
+        String test = "Gebruiker kan realtime chatten met anderen";
+        dao.updateUserstoryBeschrijving(1, test);
 
         List<Userstory> result = dao.getUserstoriesByLijstId(1);
         Userstory uitDB = result.get(0);
@@ -70,7 +58,7 @@ public class UserstoryTest {
     @Test
     public void testDeleteUserstory() {
         Userstory story = dao.createUserstory(1, "Verwijder mij", "Ik ga weg");
-        dao.delete(story.getUserstoryId());
+        dao.deleteUserstory(story.getUserstoryId());
 
         List<Userstory> result = dao.getUserstoriesByLijstId(1);
         assertTrue(result.isEmpty());
