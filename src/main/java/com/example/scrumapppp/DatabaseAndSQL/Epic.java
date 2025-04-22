@@ -1,26 +1,19 @@
 package com.example.scrumapppp.DatabaseAndSQL;
 
-public class Epic {
-    private int epicId;
+public class Epic extends WerkItem {
     private int userstoryId;
-    private String titel;
 
     public Epic(int epicId, int userstoryId, String titel) {
-        this.epicId = epicId;
+        super(epicId, titel);
         this.userstoryId = userstoryId;
-        this.titel = titel;
     }
 
     public int getEpicId() {
-        return epicId;
+        return id;
     }
 
     public int getUserstoryId() {
         return userstoryId;
-    }
-
-    public String getTitel() {
-        return titel;
     }
 
     public void setTitel(String titel) {
@@ -28,8 +21,12 @@ public class Epic {
     }
 
     @Override
+    public String getType() {
+        return "Epic";
+    }
+
+    @Override
     public String toString() {
         return titel;
     }
-
 }

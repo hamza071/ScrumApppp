@@ -1,23 +1,35 @@
 package com.example.scrumapppp.DatabaseAndSQL;
 
-public class Taak {
-    private int taakId;
+public class Taak extends WerkItem {
     private int userstoryId;
-    private String titel;
     private boolean isDone;
 
     public Taak(int taakId, int userstoryId, String titel, boolean isDone) {
-        this.taakId = taakId;
+        super(taakId, titel);
         this.userstoryId = userstoryId;
-        this.titel = titel;
         this.isDone = isDone;
     }
 
-    // Getters en Setters
-    public int getTaakId() { return taakId; }
-    public int getUserstoryId() { return userstoryId; }
-    public String getTitel() { return titel; }
-    public boolean isDone() { return isDone; }
+    public int getTaakId() {
+        return id;
+    }
+
+    public int getUserstoryId() {
+        return userstoryId;
+    }
+
+    public boolean isDone() {
+        return isDone;
+    }
+
+    public void setDone(boolean done) {
+        isDone = done;
+    }
+
+    @Override
+    public String getType() {
+        return "Taak";
+    }
 
     @Override
     public String toString() {

@@ -37,7 +37,7 @@ public class ScrumController {
 
     @FXML
     private void initialize() {
-        // Nog niets doen tot teamId gezet is
+
     }
 
     public void setTeamId(int teamId) {
