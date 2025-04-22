@@ -223,7 +223,7 @@ public class ScrumController {
             voegUserstoryToeAanBox(userStoriesBox, userstory);
         }
 
-        Button kaartToeBtn = new Button("+ Voeg kaart toe");
+        Button kaartToeBtn = new Button("+ Voeg User Story toe");
         kaartToeBtn.setOnAction(e -> maakNieuweUserStory(lijst, userStoriesBox));
 
         lijstBox.getChildren().addAll(titelLabel, userStoriesBox, kaartToeBtn);
