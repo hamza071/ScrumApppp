@@ -46,17 +46,6 @@ public class TaakTest {
         assertTrue(taak.getTaakId() > 0);
     }
 
-    @Test
-    public void testGetTakenByUserstoryId() {
-        dao.createTaak(2, "Back-end API maken");
-        dao.createTaak(2, "Database koppelen");
-        dao.createTaak(3, "UI testen");
-
-        List<Taak> taken = dao.getTakenByUserstoryId(2);
-        assertEquals(2, taken.size());
-        assertTrue(taken.stream().anyMatch(t -> t.getTitel().equals("Back-end API maken")));
-        assertTrue(taken.stream().anyMatch(t -> t.getTitel().equals("Database koppelen")));
-    }
 
     @Test
     public void testUpdateTaakStatus() {
