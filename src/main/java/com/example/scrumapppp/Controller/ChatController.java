@@ -32,6 +32,7 @@ public class ChatController {
     private final TaakDAO taakDAO = new TaakDAO();
     private final ChatDAO chatDAO = new ChatDAO();
     private final ChatGroepDAO chatGroepDAO = new ChatGroepDAO();
+    private final EpicDAO epicDAO = new EpicDAO();
 
     private String huidigeGroep = null;
     private Timeline autoRefreshTimer;
@@ -57,9 +58,7 @@ public class ChatController {
     }
 
     private void startAutoRefresh() {
-        if (autoRefreshTimer != null) {
-            autoRefreshTimer.stop();
-        }
+        if (autoRefreshTimer != null) autoRefreshTimer.stop();
 
         autoRefreshTimer = new Timeline(new KeyFrame(Duration.seconds(3), e -> laadChatVoorHuidigeGroep()));
         autoRefreshTimer.setCycleCount(Timeline.INDEFINITE);
@@ -80,7 +79,7 @@ public class ChatController {
     private void verstuurBericht() {
         String bericht = inputField.getText().trim();
         if (!bericht.isEmpty() && huidigeGroep != null) {
-            String gebruiker = UserSession.getUsername(); // ✅ Naam van ingelogde gebruiker
+            String gebruiker = UserSession.getUsername();
 
             ChatBericht nieuwBericht = new ChatBericht(
                     huidigeGroep,
@@ -104,10 +103,8 @@ public class ChatController {
         ComboBox<Sprint> sprintComboBox = new ComboBox<>();
         ComboBox<Lijst> lijstComboBox = new ComboBox<>();
         ComboBox<Userstory> userStoryComboBox = new ComboBox<>();
-        ComboBox<String> taakComboBox = new ComboBox<>();
         ComboBox<String> epicComboBox = new ComboBox<>();
-
-        EpicDAO epicDAO = new EpicDAO();
+        ComboBox<String> taakComboBox = new ComboBox<>();
 
         sprintComboBox.getItems().addAll(sprintDAO.getSprintsByTeamId(teamId));
 
@@ -115,35 +112,35 @@ public class ChatController {
             Sprint s = sprintComboBox.getValue();
             lijstComboBox.getItems().setAll(s != null ? lijstDAO.getLijstenBySprintId(s.getSprintId()) : List.of());
             userStoryComboBox.getItems().clear();
-            taakComboBox.getItems().setAll("– Geen –");
             epicComboBox.getItems().setAll("– Geen –");
+            taakComboBox.getItems().setAll("– Geen –");
         });
 
         lijstComboBox.setOnAction(e -> {
             Lijst l = lijstComboBox.getValue();
             userStoryComboBox.getItems().setAll(l != null ? userstoryDAO.getUserstoriesByLijstId(l.getLijstId()) : List.of());
-            taakComboBox.getItems().setAll("– Geen –");
             epicComboBox.getItems().setAll("– Geen –");
+            taakComboBox.getItems().setAll("– Geen –");
         });
 
         userStoryComboBox.setOnAction(e -> {
             Userstory us = userStoryComboBox.getValue();
 
-            // Taken laden (als Strings)
-            taakComboBox.getItems().clear();
-            taakComboBox.getItems().add("– Geen –");
-            if (us != null) {
-                for (Taak taak : taakDAO.getTakenByUserstoryId(us.getUserstoryId())) {
-                    taakComboBox.getItems().add(taak.getTitel());
-                }
-            }
-
-            // Epics laden
+            // Epics
             epicComboBox.getItems().clear();
             epicComboBox.getItems().add("– Geen –");
             if (us != null) {
                 for (Epic epic : epicDAO.getEpicsByUserstoryId(us.getUserstoryId())) {
                     epicComboBox.getItems().add(epic.getTitel());
+                }
+            }
+
+            // Taken
+            taakComboBox.getItems().clear();
+            taakComboBox.getItems().add("– Geen –");
+            if (us != null) {
+                for (Taak taak : taakDAO.getTakenByUserstoryId(us.getUserstoryId())) {
+                    taakComboBox.getItems().add(taak.getTitel());
                 }
             }
         });
@@ -152,8 +149,8 @@ public class ChatController {
                 new Label("Sprint:"), sprintComboBox,
                 new Label("Lijst:"), lijstComboBox,
                 new Label("User Story:"), userStoryComboBox,
-                new Label("Epic"), epicComboBox,
-                new Label("Taak"), taakComboBox
+                new Label("Epic:"), epicComboBox,
+                new Label("Taak:"), taakComboBox
         );
         dialog.getDialogPane().setContent(content);
 
@@ -173,13 +170,11 @@ public class ChatController {
                 if (userStoryComboBox.getValue() != null)
                     naam.append(" > ").append(userStoryComboBox.getValue().getTitel());
 
-                String epicTitel = epicComboBox.getValue();
-                if (epicTitel != null && !epicTitel.equals("– Geen –"))
-                    naam.append(" > ").append(epicTitel);
+                if (epicComboBox.getValue() != null && !epicComboBox.getValue().equals("– Geen –"))
+                    naam.append(" > ").append(epicComboBox.getValue());
 
-                String taakTitel = taakComboBox.getValue();
-                if (taakTitel != null && !taakTitel.equals("– Geen –"))
-                    naam.append(" > ").append(taakTitel);
+                if (taakComboBox.getValue() != null && !taakComboBox.getValue().equals("– Geen –"))
+                    naam.append(" > ").append(taakComboBox.getValue());
 
                 String groepsnaam = naam.toString();
                 if (!groepsnaam.isBlank()) {
@@ -199,8 +194,9 @@ public class ChatController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/ScrumScherm.fxml"));
             Parent root = loader.load();
 
+            // TeamId opnieuw instellen op de ScrumController
             ScrumController controller = loader.getController();
-            controller.setTeamId(teamId); // ✅ TeamId doorgeven aan controller
+            controller.setTeamId(teamId);
 
             Stage huidigeStage = (Stage) groepListView.getScene().getWindow();
             huidigeStage.setScene(new Scene(root));
