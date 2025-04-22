@@ -13,11 +13,6 @@
     <children>
         <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
             <children>
-            <ImageView fitHeight="1086.0" fitWidth="1934.0" layoutY="-4.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../../../../../../../../../Pictures/nature-background-high-resolution-wallpaper-for-a-serene-and-stunning-view-photo.jpg" />
-               </image>
-            </ImageView>
                 <!-- Label for Scrumboard name -->
                 <Label alignment="CENTER" layoutX="711.0" layoutY="435.0" style="&#10;" text="Wat is de naam van uw Scrumboard?" textAlignment="CENTER" wrapText="false">
                     <font>

@@ -91,21 +91,54 @@ public class ScrumController {
         Button chatBtn = new Button("Chat");
         chatBtn.setOnAction(e -> openChatVenster());
 
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
+        Region spacer = new Region();  // Spacer toegevoegd om ruimte te creëren
+        HBox.setHgrow(spacer, Priority.ALWAYS);  // Zorgt ervoor dat de knop naar rechts wordt geduwd
 
         Label teamLabel = new Label("Team ID: " + teamId);
         teamLabel.setStyle("-fx-font-weight: bold;");
 
+        // Voeg de "Team Select" knop toe
+        Button teamSelectKnop = new Button("Team Select");
+        teamSelectKnop.setOnAction(e -> openTeamSelect());
+
+        // Voeg alles toe aan de topBar
         topBar.getChildren().addAll(
                 nieuweLijstBtn,
                 nieuweSprintBtn,
                 sprintComboBox,
                 chatBtn,
-                spacer,
+                spacer,  // Voeg de spacer toe
+                teamSelectKnop,  // Voeg de "Team Select" knop toe
                 teamLabel
         );
         return topBar;
+    }
+
+    private void openTeamSelect() {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/TeamSelect.fxml"));
+            Parent root = fxmlLoader.load();
+
+            // Verkrijg de huidige Stage
+            Stage huidigeStage = (Stage) mainLayout.getScene().getWindow();
+
+            // Maak een nieuwe scene voor het Team Select scherm
+            Scene teamSelectScene = new Scene(root);
+
+            // Zet de nieuwe scène in de huidige stage
+            huidigeStage.setScene(teamSelectScene);
+
+            // Zet de titel van het venster
+            huidigeStage.setTitle("Team Select");
+
+            // Zet het venster in fullscreen modus
+            huidigeStage.setFullScreen(true);
+
+            // Toon het venster
+            huidigeStage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void laadSprints() {
@@ -388,3 +421,4 @@ public class ScrumController {
         });
     }
 }
+
