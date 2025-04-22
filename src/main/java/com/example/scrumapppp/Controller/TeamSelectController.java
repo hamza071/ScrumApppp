@@ -20,6 +20,7 @@ import java.sql.SQLException;
 
 public class TeamSelectController {
 
+    // FXML-velden voor de gebruikersinterface
     @FXML
     private TextField teamIdField;
 
@@ -29,15 +30,19 @@ public class TeamSelectController {
     @FXML
     private Button createTeamButton;
 
+    // Methode die wordt uitgevoerd wanneer de gebruiker probeert zich bij een team aan te sluiten
     @FXML
     private void handleJoinButtonClick(ActionEvent event) {
+        // Verkrijg het team ID van de tekstveld
         String input = teamIdField.getText().trim();
 
+        // Controleer of het invoerveld leeg is
         if (input.isEmpty()) {
             toonAlert("Fout", "Voer een team ID in.");
             return;
         }
 
+        // Probeer het team ID om te zetten naar een integer
         int teamId;
         try {
             teamId = Integer.parseInt(input);
@@ -46,24 +51,29 @@ public class TeamSelectController {
             return;
         }
 
+        // Verbind met de database om te controleren of het team ID bestaat
         try (Connection conn = DatabaseManager.getConnection()) {
+            // Query om te controleren of het team met de gegeven ID bestaat
             PreparedStatement checkTeam = conn.prepareStatement("SELECT naam FROM team WHERE Team_ID = ?");
             checkTeam.setInt(1, teamId);
             ResultSet rs = checkTeam.executeQuery();
 
+            // Als het team bestaat, koppel de gebruiker aan dit team
             if (rs.next()) {
-                // ✅ Team bestaat - gebruiker koppelen
                 PreparedStatement updateUser = conn.prepareStatement(
                         "UPDATE gebruiker SET Team_ID = ? WHERE Gebruiker_ID = ?"
                 );
-                updateUser.setInt(1, teamId);
-                updateUser.setInt(2, UserSession.getID());
+                updateUser.setInt(1, teamId);  // Zet het team ID voor de gebruiker
+                updateUser.setInt(2, UserSession.getID());  // Gebruik de ID van de ingelogde gebruiker
                 updateUser.executeUpdate();
 
+                // Update de sessie van de gebruiker met het nieuwe team ID
                 UserSession.setTeamID(teamId);
 
-                openScrumBoard(teamId); // ScrumBoard openen
+                // Open het Scrum Board voor dit team
+                openScrumBoard(teamId);
             } else {
+                // Als het team niet bestaat, toon een foutmelding
                 toonAlert("Team niet gevonden", "Geen team met ID: " + teamId);
             }
         } catch (SQLException e) {
@@ -72,19 +82,23 @@ public class TeamSelectController {
         }
     }
 
+    // Methode die wordt uitgevoerd wanneer de gebruiker een nieuw team wil aanmaken
     @FXML
     private void handleCreateButtonClick(ActionEvent event) {
         try {
+            // Laad het scherm voor het aanmaken van een team
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/TeamScherm.fxml"));
             Parent root = loader.load();
             Scene scene = new Scene(root);
 
+            // Maak een nieuw venster voor het team scherm
             Stage stage = new Stage();
             stage.setTitle("Team Scherm");
             stage.setScene(scene);
-            stage.setFullScreen(true);
+            stage.setFullScreen(true);  // Zet het venster fullscreen
             stage.show();
 
+            // Sluit het huidige venster (TeamSelect)
             Stage huidigeStage = (Stage) createTeamButton.getScene().getWindow();
             huidigeStage.close();
         } catch (IOException e) {
@@ -93,21 +107,26 @@ public class TeamSelectController {
         }
     }
 
+    // Methode om het Scrum Board scherm te openen na succesvolle teamselectie
     private void openScrumBoard(int teamId) {
         try {
+            // Laad het Scrum Board scherm
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/scrumapppp/ScrumScherm.fxml"));
             Parent root = loader.load();
 
+            // Verkrijg de controller van het Scrum Board scherm en geef het team ID door
             ScrumController controller = loader.getController();
-            controller.setTeamId(teamId);  // ✅ Geef het team ID door aan controller
+            controller.setTeamId(teamId);
 
+            // Maak een nieuw venster voor het Scrum Board
             Scene scene = new Scene(root);
             Stage stage = new Stage();
             stage.setTitle("Scrum Board");
             stage.setScene(scene);
-            stage.setFullScreen(true);
+            stage.setFullScreen(true);  // Zet het venster fullscreen
             stage.show();
 
+            // Sluit het huidige venster (TeamSelect)
             Stage huidigeStage = (Stage) teamIdField.getScene().getWindow();
             huidigeStage.close();
         } catch (IOException e) {
@@ -116,6 +135,7 @@ public class TeamSelectController {
         }
     }
 
+    // Methode om een waarschuwingsalert te tonen
     private void toonAlert(String titel, String bericht) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle(titel);

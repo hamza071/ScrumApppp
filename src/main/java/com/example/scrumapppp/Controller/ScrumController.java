@@ -400,6 +400,7 @@ public class ScrumController {
         return item;
     }
 
+   // nieuwe
     private void openNieuweEpicDialog(Userstory userstory, VBox epicBox) {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Nieuwe Epic");

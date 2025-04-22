@@ -37,16 +37,18 @@ public class ChatController {
     private String huidigeGroep = null;
     private Timeline autoRefreshTimer;
 
+    // laadt de lijst met groepen en klik
     @FXML
     public void initialize() {
         groepListView.setOnMouseClicked(this::laadChatVoorGroep);
         laadAlleGroepen();
     }
-
+    // Haalt alle chat groepen met team id
     private void laadAlleGroepen() {
         groepListView.getItems().setAll(chatGroepDAO.getGroepsnamenVoorTeam(teamId));
     }
 
+    // Als een groep geselecteerd wordt dan laden de chats en auto refresh
     private void laadChatVoorGroep(MouseEvent e) {
         String geselecteerdeGroep = groepListView.getSelectionModel().getSelectedItem();
         if (geselecteerdeGroep != null) {
@@ -56,11 +58,11 @@ public class ChatController {
             laadChatVoorHuidigeGroep();
         }
     }
-
+    // refresh methode elke 8 seconden
     private void startAutoRefresh() {
         if (autoRefreshTimer != null) autoRefreshTimer.stop();
 
-        autoRefreshTimer = new Timeline(new KeyFrame(Duration.seconds(3), e -> laadChatVoorHuidigeGroep()));
+        autoRefreshTimer = new Timeline(new KeyFrame(Duration.seconds(8), e -> laadChatVoorHuidigeGroep()));
         autoRefreshTimer.setCycleCount(Timeline.INDEFINITE);
         autoRefreshTimer.play();
     }
@@ -74,7 +76,7 @@ public class ChatController {
             }
         }
     }
-
+    // verzend bericht in database en laden in chat
     @FXML
     private void verstuurBericht() {
         String bericht = inputField.getText().trim();
@@ -94,6 +96,7 @@ public class ChatController {
         }
     }
 
+    // nieuwe groep knop aanmaken
     @FXML
     private void openGroepPopup() {
         Dialog<Void> dialog = new Dialog<>();
@@ -187,7 +190,7 @@ public class ChatController {
 
         dialog.showAndWait();
     }
-
+   // knop om terug te gaan naar scrumboard
     @FXML
     private void gaTerugNaarBoard() {
         try {
